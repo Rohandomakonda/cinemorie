@@ -19,7 +19,8 @@ fun Main() {
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            HomeScreen()
+            //HomeScreen()
+            GenrePage()
         }
     }
 }
