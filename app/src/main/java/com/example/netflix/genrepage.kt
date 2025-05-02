@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
+
+
 @Composable
 fun GenrePage() {
     val genres = listOf(
@@ -42,24 +44,49 @@ fun GenrePage() {
 
     )
     val darkVioletColors = violetColors.map { darken(it, 0.3f) }
+    Scaffold(
+        topBar = { appbar() }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(gradient(isVertical = true, colors = darkVioletColors)),
+             horizontalAlignment = Alignment.CenterHorizontally
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradient(isVertical = true, colors = darkVioletColors)) // Full screen gradient
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
         ) {
-            items(genres) { genre ->
-               Card3(item = genre)
+            Text(
+                text = "Genre",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(16.dp)
+
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                     // Full screen gradient
+            ) {
+
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(genres) { genre ->
+                        Card3(item = genre)
+                    }
+                }
             }
         }
     }
+
+
 }
 
 

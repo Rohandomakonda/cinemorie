@@ -11,18 +11,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun Main() {
-    Scaffold(
-        topBar = { appbar() }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            //HomeScreen()
-            GenrePage()
-        }
-    }
+    WelcomeScreen()
 }
 
 
