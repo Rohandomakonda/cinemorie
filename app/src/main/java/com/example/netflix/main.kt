@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Main1() {
+fun Main() {
     Scaffold(
         topBar = { appbar() }
     ) { paddingValues ->

@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NetflixTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Main1()
+                    Main()
                 }
             }
         }
