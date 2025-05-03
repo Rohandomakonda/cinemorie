@@ -3,6 +3,7 @@ package com.example.netflix
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -44,39 +45,42 @@ fun GenrePage() {
 
     )
     val darkVioletColors = violetColors.map { darken(it, 0.3f) }
-    Scaffold(
-        topBar = { appbar() }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(gradient(isVertical = true, colors = darkVioletColors)),
-             horizontalAlignment = Alignment.CenterHorizontally
 
-        ) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize()
+            .background(gradient(isVertical = true, colors = darkVioletColors)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
             Text(
                 text = "Genre",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
                 modifier = Modifier.padding(16.dp)
-
             )
-            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+
+        item {
+            // Wrap the LazyVerticalGrid inside a Box
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                     // Full screen gradient
+                    .fillMaxWidth()
             ) {
-
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 10000.dp) // Ensure grid expands in LazyColumn
                 ) {
                     items(genres) { genre ->
                         Card3(item = genre)
@@ -86,8 +90,9 @@ fun GenrePage() {
         }
     }
 
-
 }
+
+
 
 
 

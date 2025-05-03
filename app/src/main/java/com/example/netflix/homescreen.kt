@@ -40,22 +40,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 
 
-@Composable
-fun home1(){
-    Scaffold(
-        topBar = { appbar() }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            HomeScreen()
-        }
 
-    }
-
-}
 
 
 @Composable
