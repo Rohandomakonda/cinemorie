@@ -4,25 +4,21 @@ package com.example.netflix
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -31,7 +27,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavHost as NavHost1
 
 @Composable
 fun Main() {
@@ -56,7 +51,7 @@ fun Main() {
                     .height(70.dp)
                     .fillMaxWidth()
                     .background(
-                        darken(Color(0xFF1E1B4B),0.5f),
+                        darken(Color(0xFF1E1B4B), 0.5f),
                     )
             ) {
                 NavigationBar(
@@ -113,6 +108,8 @@ fun Main() {
 
     }
 }
+
+
 @Composable
 fun Navigation(navController: NavController) {
 
@@ -126,12 +123,13 @@ fun Navigation(navController: NavController) {
                 year = 2001,
                 ageRating = "13+",
                 backgroundImage = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg",
-                castList = null,
+                morelikethis = listOf("Harry Potter" to "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg","Google" to "google_icon.png"),
                 genres = listOf("Magic","Mystery","Sci-fi")
             )
-            //MovieDetailScreen(data)
-            HomeScreen()
+            MovieDetailScreen(data)
+            //HomeScreen()
             //if u want to test test here
+
 
 
         }

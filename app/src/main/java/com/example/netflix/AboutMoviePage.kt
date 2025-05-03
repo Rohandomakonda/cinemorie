@@ -1,7 +1,5 @@
 package com.example.netflix
 
-import android.R
-import android.text.Layout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,16 +30,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun MovieDetailScreen(
@@ -75,98 +74,150 @@ fun MovieDetailScreen(
                 tonalElevation = 6.dp, // subtle shadow
                 shadowElevation = 8.dp
             ){
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = data.title,
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.padding(30.dp,16.dp)
-                        )
-                        Text(
-                            text = data.tags,
-                            fontSize = 15.sp,
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(end = 30.dp)
-                                .background(
-                                    color = Color.Transparent,
-                                    shape = CircleShape
-                                )
-                                .border(
-                                    width = 2.dp,  // Border thickness
-                                    color = Color.White,  // Border color
-                                    shape = CircleShape  // Ensure the border follows the circle shape
-                                )
-                                .padding(horizontal = 10.dp, vertical = 4.dp)  // Adjust the padding to make sure text is inside the circle
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(0.dp))
-                    Text(
-                        text = data.genres.joinToString(),
-                        fontSize = 15.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(30.dp,2.dp)
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(start = 30.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = Color.Yellow,
-                            modifier = Modifier.size(16.dp)  // Optional: set icon size
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))  // Optional spacing between icon and text
-                        Text(
-                            text = "${data.rating} ${data.year} ${data.ageRating}",
-                            fontSize = 15.sp,
-                            color = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = data.description,
-                        fontSize = 15.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(30.dp).width(300.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.Bottom
-                        ){
-                        Button(
-                            onClick = {},
-                            modifier = Modifier.padding(8.dp).border(border = BorderStroke(2.dp,Color.Transparent),shape = RoundedCornerShape(20))
-                                .width(180.dp).border(border = BorderStroke(2.dp,Color.Transparent),shape=RoundedCornerShape(100)),
-                            colors = ButtonColors(
-                                containerColor = Color(185,40,94),
-                                contentColor = Color.White,
-                                disabledContentColor = Color.White,
-                                disabledContainerColor = Color(185,40,94)
-                            )
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    item {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Watch Now")
+                            Text(
+                                text = data.title,
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(30.dp, 16.dp)
+                            )
+                            Text(
+                                text = data.tags,
+                                fontSize = 15.sp,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(end = 30.dp)
+                                    .background(
+                                        color = Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 2.dp,  // Border thickness
+                                        color = Color.White,  // Border color
+                                        shape = CircleShape  // Ensure the border follows the circle shape
+                                    )
+                                    .padding(
+                                        horizontal = 10.dp,
+                                        vertical = 4.dp
+                                    )  // Adjust the padding to make sure text is inside the circle
+                            )
                         }
-                        Button(
-                            onClick = {},
-                            modifier = Modifier.padding(8.dp).border(border = BorderStroke(2.dp,Color.Transparent),shape = RoundedCornerShape(20))
-                                .width(200.dp).border(border = BorderStroke(2.dp,Color.White),shape=RoundedCornerShape(100)),
-                            colors = ButtonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = Color.White,
-                                disabledContentColor = Color.White,
-                                disabledContainerColor = Color.Transparent
-                            )
+                        Spacer(modifier = Modifier.height(0.dp))
+                        Text(
+                            text = data.genres.joinToString(),
+                            fontSize = 15.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(30.dp, 2.dp)
+                        )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(start = 30.dp)
                         ) {
-                            Text("Trailer")
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = Color.Yellow,
+                                modifier = Modifier.size(16.dp)  // Optional: set icon size
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))  // Optional spacing between icon and text
+                            Text(
+                                text = "${data.rating} ${data.year} ${data.ageRating}",
+                                fontSize = 15.sp,
+                                color = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = data.description,
+                            fontSize = 15.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(30.dp).width(300.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.padding(8.dp).border(
+                                    border = BorderStroke(2.dp, Color.Transparent),
+                                    shape = RoundedCornerShape(20)
+                                )
+                                    .width(180.dp).border(
+                                        border = BorderStroke(2.dp, Color.Transparent),
+                                        shape = RoundedCornerShape(100)
+                                    ),
+                                colors = ButtonColors(
+                                    containerColor = Color(185, 40, 94),
+                                    contentColor = Color.White,
+                                    disabledContentColor = Color.White,
+                                    disabledContainerColor = Color(185, 40, 94)
+                                )
+                            ) {
+                                Text("Watch Now")
+                            }
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.padding(8.dp).border(
+                                    border = BorderStroke(2.dp, Color.Transparent),
+                                    shape = RoundedCornerShape(20)
+                                )
+                                    .width(200.dp).border(
+                                        border = BorderStroke(2.dp, Color.White),
+                                        shape = RoundedCornerShape(100)
+                                    ),
+                                colors = ButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = Color.White,
+                                    disabledContentColor = Color.White,
+                                    disabledContainerColor = Color.Transparent
+                                )
+                            ) {
+                                Text("Trailer")
+                            }
+                        }
+                        if (!data.morelikethis.isNullOrEmpty()) {
+                            Column(modifier = Modifier.padding(30.dp, 8.dp)) {
+                                Text(
+                                    text = "More Like this: ",
+                                    fontSize = 15.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding()
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                LazyRow() {
+                                    items(data.morelikethis) {(name,image)->
+                                        val imagePainter = rememberAsyncImagePainter(image)
+                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)){
+                                            Image(
+                                                painter = imagePainter,
+                                                contentDescription = "${name} picture",
+                                                modifier = Modifier
+                                                    .size(100.dp)
+                                                    .clip(RoundedCornerShape(20))
+                                                    .background(Color.Gray, RoundedCornerShape(20))
+                                                    .border(2.dp, Color.White, RoundedCornerShape(20)),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            Text(
+                                                text = name,
+                                                fontSize = 15.sp,
+                                                color = Color.White
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -188,6 +239,6 @@ data class movieDetails(
     val year: Int,
     val ageRating: String,
     val backgroundImage: String,
-    val castList: List<Pair<String, Painter>>? =null,
+    val morelikethis: List<Pair<String,String>>? =null,
     val genres: List<String>
 )
