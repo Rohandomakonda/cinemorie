@@ -1,8 +1,10 @@
 package com.example.netflix
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -29,12 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import coil.compose.rememberAsyncImagePainter
 
 @Preview(showBackground = true)
 @Composable
@@ -56,145 +60,162 @@ fun RegisterPage() {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradient(true, darkVioletColors))
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            "Register",
-            style = TextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 40.sp,
-                brush = gradient
-            )
-        )
-        Text(
-            text = "Create your account",
-            style = TextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                brush = gradient
-            ),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background Image
+        Image(
+            painter = rememberAsyncImagePainter("https://st.depositphotos.com/35570512/60698/v/450/depositphotos_606980010-stock-illustration-dark-purple-background-abstract-geometric.jpg"),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
 
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username", color = Color.White) },
-            leadingIcon = {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Key Icon",
-                    tint = Color.White
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent
-            ),
-            modifier = Modifier.fillMaxWidth()
+        // Optional dark overlay for readability
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f))
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email Address", color = Color.White) },
-            leadingIcon = {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Key Icon",
-                    tint = Color.White
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password", color = Color.White) },
-            leadingIcon = {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "lock Icon",
-                    tint = Color.White
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", color = Color.White) },
-            leadingIcon = {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "lock Icon",
-                    tint = Color.White
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "By registering, you agree to our Terms and Privacy Policy",
-            color = Color.White,
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { /* Handle registration */ },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
+        // Foreground content without extra gradient
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp), // Add padding if needed
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("REGISTER", color = Color.White)
+            Text(
+                "Register",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp,
+                    brush = gradient
+                )
+            )
+            Text(
+                text = "Create your account",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    brush = gradient
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username", color = Color.White) },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Key Icon",
+                        tint = Color.White
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email Address", color = Color.White) },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = "Key Icon",
+                        tint = Color.White
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password", color = Color.White) },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "lock Icon",
+                        tint = Color.White
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm Password", color = Color.White) },
+                leadingIcon = {
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "lock Icon",
+                        tint = Color.White
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "By registering, you agree to our Terms and Privacy Policy",
+                color = Color.White,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { /* Handle registration */ },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
+            ) {
+                Text("REGISTER", color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                "Already have an account? Login",
+                color = Color.White,
+                modifier = Modifier.clickable { onLoginClick() }
+            )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            "Already have an account? Login",
-            color = Color.White,
-            modifier = Modifier.clickable { onLoginClick() }
-        )
     }
 }
 

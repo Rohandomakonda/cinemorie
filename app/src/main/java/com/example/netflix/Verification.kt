@@ -1,13 +1,11 @@
 package com.example.netflix
 
-import android.R.attr.textColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -25,6 +23,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,25 +33,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
-import org.w3c.dom.Text
-import java.nio.file.WatchEvent
 
-@Preview(showBackground=true)
+
 @Composable
-fun LoginPage() {
+fun verificationpage() {
     val lightPurple = Color(0xFF9F80C2)
     val pinkPurple = Color(0xFFEC6BF2)
+    val LightBlue = Color(0xFF03A9F4)
 
     val gradient = Brush.linearGradient(
         colors = listOf(lightPurple, pinkPurple)
@@ -90,7 +85,7 @@ fun LoginPage() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Welcome Back",
+                "Verification",
                 style = TextStyle(
                     fontWeight = FontWeight.Bold, // Makes the text bold
                     fontSize = 45.sp,
@@ -104,7 +99,7 @@ fun LoginPage() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Login to your Account",
+                    text = "enetr the otp sent to your email",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
@@ -116,10 +111,10 @@ fun LoginPage() {
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Enter the username", color = Color.White) },
+                label = { Text("Enter the OTP", color = Color.White) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Person,
+                        painter = painterResource(id = R.drawable.baseline_key_24),
                         contentDescription = "Key Icon",
                         tint = Color.White
                     )
@@ -132,57 +127,6 @@ fun LoginPage() {
                 ),
                 modifier = Modifier.fillMaxWidth().background(Color.Transparent)
             )
-            Spacer(modifier = Modifier.padding(8.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Enter the password", color = Color.White) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = "lock Icon",
-                        tint = Color.White
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = rememberMe, onCheckedChange = { rememberMe = it })
-                    Text("Remember me", color = Color.White)
-                }
-                Text("Forgot Password?", color = Color.Cyan, modifier = Modifier.clickable {})
-            }
-            Button(
-                onClick = {
-                    println("Login with Gmail clicked")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDB4437))
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.google_icon),
-                    contentDescription = "Google Icon",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 8.dp)
-                )
-                Text("Login with Gmail", color = Color.White)
-            }
-
 
             Button(
                 onClick = { },
@@ -191,21 +135,17 @@ fun LoginPage() {
                     .padding(top = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
             ) {
-                Text("LOGIN", color = Color.White)
+                Text("Register", color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Don't have an account? Sign up",
-                color = Color.White,
+                "resend OTP",
+                color = LightBlue,
                 modifier = Modifier.clickable { }
             )
 
         }
     }
 }
-
-//private fun ColumnScope.onRegisterClick() {
-//    TODO("Not yet implemented")
-//}
