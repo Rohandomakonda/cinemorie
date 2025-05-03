@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.res.painterResource
 import org.w3c.dom.Text
 import java.nio.file.WatchEvent
 
@@ -136,6 +139,27 @@ fun LoginPage(){
             }
             Text("Forgot Password?", color = Color.Cyan, modifier = Modifier.clickable {})
         }
+        Button(
+            onClick = {
+                println("Login with Gmail clicked")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDB4437))
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.google_icon),
+                contentDescription = "Google Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
+            Text("Login with Gmail", color = Color.White)
+        }
+
+
         Button(
             onClick = { },
             modifier = Modifier
