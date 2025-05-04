@@ -127,7 +127,7 @@ fun Navigation(navController: NavController) {
                 genres = listOf("Magic","Mystery","Sci-fi")
             )
             MovieDetailScreen(data)
-            //HomeScreen()
+           // HomeScreen()
             //if u want to test test here
 
 
