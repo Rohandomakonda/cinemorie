@@ -2,11 +2,15 @@ package com.example.netflix
 
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -17,14 +21,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 
 fun darken(color: Color, factor: Float): Color {
     return Color(
@@ -73,14 +81,39 @@ fun appbar() {
             ),
 
         )
+        Row(){
+            IconButton(onClick = { /* Handle the click */ }) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon",
+                    tint = Color.White
+                )
+            }
+            Column() {
+                IconButton(onClick = { /* Handle the click */ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.red_hulk), // Replace with your image URL
+                        contentDescription = "Profile Picture",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(40.dp) // Avatar size
+                            .clip(CircleShape)
+                    )
 
-        IconButton(onClick = { /* Handle the click */ }) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search Icon",
-                tint = Color.White
-            )
+                }
+                Text("User_name",
+                    color = Color.White,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold, // Makes the text bold
+                        fontSize = 12.sp,
+
+                    ))
+            }
+
+
         }
+
+
     }
 }
 
