@@ -126,8 +126,8 @@ fun Navigation(navController: NavController) {
                 morelikethis = listOf("Harry Potter" to "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg","Google" to "google_icon.png"),
                 genres = listOf("Magic","Mystery","Sci-fi")
             )
-            MovieDetailScreen(data)
-           // HomeScreen()
+            //MovieDetailScreen(data)
+            HomeScreen()
             //if u want to test test here
 
 
