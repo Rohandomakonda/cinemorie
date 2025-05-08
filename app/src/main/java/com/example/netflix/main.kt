@@ -133,6 +133,17 @@ fun Navigation(navController: NavController) {
 
 
         }
+       composable(Screen.BottomScreen.Movies.bRoute){
+
+       }
+        composable(Screen.BottomScreen.Shows.bRoute){
+
+        }
+        composable(Screen.BottomScreen.WatchList.bRoute){
+
+        }
+
+
 
     }
 }

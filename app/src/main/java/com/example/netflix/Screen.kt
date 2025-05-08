@@ -22,6 +22,29 @@ sealed class Screen(val title: String, val route: String) {
             "Movies", "movies",R.drawable.baseline_movie_24
 
         )
+
+    }
+    sealed class OtherPage(
+        val bTitle: String, val bRoute: String
+    ):Screen(bTitle,bRoute){
+        object Genre : OtherPage("Genre", "genre")
+        object MovieInfo : OtherPage(
+            "MovieInfo", "movieinfo"
+        )
+        object Welcome: OtherPage(
+            "Welcome", "welcome",
+
+        )
+        object Login: OtherPage(
+            "Login", "login"
+        )
+        object Register: OtherPage(
+            "Register", "register"
+        )
+        object Verification: OtherPage(
+            "Verification", "verification"
+        )
+
     }
 
 
@@ -35,5 +58,16 @@ val screensInBottom = listOf(
     Screen.BottomScreen.Movies,
     Screen.BottomScreen.Shows,
     Screen.BottomScreen.WatchList,
+)
+val otherScreens = listOf(
+    Screen.OtherPage.Genre,
+    Screen.OtherPage.MovieInfo,
+
+)
+val introScreens= listOf(
+    Screen.OtherPage.Welcome,
+    Screen.OtherPage.Register,
+    Screen.OtherPage.Login,
+    Screen.OtherPage.Verification
 )
 
