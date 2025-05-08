@@ -68,7 +68,10 @@ fun AddProfile() {
         modifier = Modifier
             .fillMaxSize()
             .background(gradient(true, darkVioletColors)),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
+
+
+        
     ) {
         Column(
             modifier = Modifier
@@ -89,12 +92,7 @@ fun AddProfile() {
                     color = Color.White,
                     fontSize = 20.sp
                 )
-                Text(
-                    text = "Add Profile",
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                )
+
                 Text(
                     text = "Done",
                     modifier = Modifier.clickable {
@@ -103,73 +101,90 @@ fun AddProfile() {
                     fontSize = 20.sp
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            if (!showSlider.value) {
-                Box(
-                    contentAlignment = Alignment.TopEnd,
-                    modifier = Modifier.clickable { showSlider.value = true }
-                ) {
-                    Image(
-                        painter = painterResource(initialImages[selectedIndex.value]),
-                        contentDescription = "Selected Profile Image",
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray, CircleShape)
-                            .border(2.dp, Color.White, CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            } else {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    itemsIndexed(initialImages) { index, url ->
-                        val isSelected = remember { derivedStateOf { selectedIndex.value == index } }
 
-                        Box(contentAlignment = Alignment.TopEnd) {
-                            Image(
-                                painter = painterResource(url),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray, CircleShape)
-                                    .border(2.dp, Color.White, CircleShape)
-                                    .clickable {
-                                        selectedIndex.value = index
-                                        showSlider.value = false // Optionally close slider on selection
-                                    },
-                                contentScale = ContentScale.Crop
-                            )
-                            if (isSelected.value) {
-                                Box(
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 100.dp), // adjust this value as needed
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (!showSlider.value) {
+                    Text(
+                        text = "Add Profile",
+                        color = Color.White,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Box(
+                        contentAlignment = Alignment.TopEnd,
+                        modifier = Modifier.clickable { showSlider.value = true }
+                    ) {
+                        Image(
+                            painter = painterResource(initialImages[selectedIndex.value]),
+                            contentDescription = "Selected Profile Image",
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape)
+                                .background(Color.Gray, CircleShape)
+                                .border(2.dp, Color.White, CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                } else {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        itemsIndexed(initialImages) { index, url ->
+                            val isSelected =
+                                remember { derivedStateOf { selectedIndex.value == index } }
+
+                            Box(contentAlignment = Alignment.TopEnd) {
+                                Image(
+                                    painter = painterResource(url),
+                                    contentDescription = null,
                                     modifier = Modifier
-                                        .size(24.dp)
-                                        .background(Color.White, CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = "Selected",
-                                        tint = Color.Black,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Gray, CircleShape)
+                                        .border(2.dp, Color.White, CircleShape)
+                                        .clickable {
+                                            selectedIndex.value = index
+                                            showSlider.value =
+                                                false // Optionally close slider on selection
+                                        },
+                                    contentScale = ContentScale.Crop
+                                )
+                                if (isSelected.value) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .background(Color.White, CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Check,
+                                            contentDescription = "Selected",
+                                            tint = Color.Black,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = profileName,
+                    onValueChange = { profileName = it },
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    textStyle = TextStyle(color = Color.White),
+                    label = { Text("Profile Name", color = Color.White) }
+                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = profileName,
-                onValueChange = { profileName = it },
-                modifier = Modifier.fillMaxWidth(0.85f),
-                textStyle = TextStyle(color = Color.White),
-                label = { Text("Profile Name", color = Color.White) }
-            )
         }
     }
 }

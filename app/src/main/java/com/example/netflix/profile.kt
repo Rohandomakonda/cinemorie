@@ -197,7 +197,7 @@ fun CircleImage3DEffect(item: ProfileItem) {
                         .offset(x = 10.dp, y = (-10).dp)
                         .background(Color.Black, CircleShape)
                         .clickable {
-                            item.isEditing.value = true
+
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -213,53 +213,13 @@ fun CircleImage3DEffect(item: ProfileItem) {
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        if (!item.isEditing.value) {
+
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-        } else {
-            val tempName = remember { mutableStateOf(item.name) }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = tempName.value,
-                onValueChange = { tempName.value = it },
 
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-                modifier = Modifier
-                    .width(120.dp)
-                    .zIndex(1f),
-
-
-            )
-
-
-            Row(horizontalArrangement = Arrangement.SpaceBetween){
-                IconButton(onClick = {item.isEditing.value = false;
-                                     item.name = tempName.value}) {
-                    Icon(
-                        imageVector = Icons.Default.Check,  // You can choose any icon
-                        contentDescription = "Tick",
-                        tint = Color.Green  // Green for tick icon
-                    )
-                }
-
-                // Delete Icon (for deleting action)
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,  // You can choose any icon
-                        contentDescription = "Delete",
-                        tint = Color.Red  // Red for delete icon
-                    )
-                }
-
-
-            }
-
-
-
-        }
     }
 }
