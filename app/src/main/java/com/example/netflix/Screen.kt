@@ -51,6 +51,9 @@ sealed class Screen(val title: String, val route: String) {
         object EditProfile: OtherPage(
             "EditProfile", "editprofile"
         )
+        object Profile: OtherPage(
+            "Profile", "profile"
+        )
 
     }
 
@@ -78,6 +81,6 @@ val introScreens= listOf(
     Screen.OtherPage.Verification,
     Screen.OtherPage.AddProfile,
     Screen.OtherPage.EditProfile,
-
+    Screen.OtherPage.Profile
 )
 

@@ -115,12 +115,7 @@ fun Navigation(navController: NavController) {
 
     NavHost(navController = navController as NavHostController, startDestination = Screen.BottomScreen.Home.route) {
         composable(Screen.BottomScreen.Home.bRoute) {
-
-            HomeScreen()
-            //if u want to test test here
-
-
-
+            HomeScreen(navController)
         }
        composable(Screen.BottomScreen.Movies.bRoute){
 

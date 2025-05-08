@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -140,7 +141,67 @@ fun ShowDetailScreen(
                             modifier = Modifier.padding(30.dp).width(300.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
+                        if (!data.episodes.isNullOrEmpty()) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                text = "Episodes",
+                                fontSize = 18.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 30.dp)
+                            )
+                            Column(modifier = Modifier.padding(30.dp)) {
+                                data.episodes.forEach { (epName, epData) ->
+                                    val (epDesc, epImageUrl) = epData
+                                    val painter = rememberAsyncImagePainter(R.drawable.billy)
 
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(vertical = 8.dp)
+                                            .fillMaxWidth()
+                                    ) {
+                                        Image(
+                                            painter = painter,
+                                            contentDescription = "$epName image",
+                                            modifier = Modifier
+                                                .height(150.dp)
+                                                .width(150.dp)
+                                                .clip(RoundedCornerShape(16.dp))
+                                                .background(Color.Gray)
+                                                .border(
+                                                    2.dp,
+                                                    Color.White,
+                                                    RoundedCornerShape(16.dp)
+                                                ),
+                                            contentScale = ContentScale.Crop
+                                        )
+
+                                        Spacer(modifier = Modifier.width(12.dp))
+
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = epName,
+                                                fontSize = 17.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = Color.White
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = epDesc,
+                                                fontSize = 14.sp,
+                                                color = Color.LightGray,
+                                                maxLines = 4, // or Int.MAX_VALUE if you want full text
+                                                overflow = TextOverflow.Ellipsis // optional: shows "..." if cut
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
                         if (!data.morelikethis.isNullOrEmpty()) {
                             Column(modifier = Modifier.padding(30.dp, 8.dp)) {
                                 Text(
@@ -178,10 +239,8 @@ fun ShowDetailScreen(
                     }
                 }
             }
-
         }
     }
-
 }
 
 

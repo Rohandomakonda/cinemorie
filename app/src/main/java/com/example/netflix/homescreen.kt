@@ -34,11 +34,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val violetGradient = listOf(
         Color(0xFF4C1D95),
         Color(0xFF1E1B4B),
@@ -61,7 +62,7 @@ fun HomeScreen() {
             .padding(bottom = 16.dp) // give some space at the end
     ) {
         item {
-            card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"))
+            card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"),navController)
         }
 
         item {
@@ -173,7 +174,7 @@ fun Card1(item: ContentItem) {
     }
 }
 @Composable
-fun card2(item: ContentItem) {
+fun card2(item: ContentItem,navController: NavController) {
     val darkViolet = darken(Color(0xFF1E1B4B),0.3f)
 
     Box(
@@ -228,7 +229,7 @@ fun card2(item: ContentItem) {
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = { /* TODO: Handle click */ },
+                    onClick = {navController.navigate(Screen.OtherPage.MovieInfo.bRoute)},
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                 ) {
                     Icon(
