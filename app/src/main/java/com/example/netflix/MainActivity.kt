@@ -29,12 +29,14 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val controller: NavController = rememberNavController()
                     val navBackStackEntry by controller.currentBackStackEntryAsState()
-                    val currentRoute =  Screen.BottomScreen.Home.bRoute
-                    if (currentRoute !in introScreens.map { it.route }) {
-                        Main()
+                    val currentRoute =  Screen.OtherPage.Welcome.bRoute
+                    if (currentRoute in introScreens.map { it.route }) {
+                        Navigation1(navController = controller)
+
                     }
                     else {
-                        Navigation1(navController = controller)
+                        Main()
+
 
                     }
 
@@ -47,35 +49,21 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigation1(navController: NavController) {
 
-    NavHost(navController = navController as NavHostController, startDestination = Screen.BottomScreen.Home.route) {
-        composable(Screen.BottomScreen.Home.bRoute) {
-            val data =  movieDetails(
-                title = "Harry Potter",
-                description = "blah blah",
-                tags = "A",
-                rating = 9.3,
-                year = 2001,
-                ageRating = "13+",
-                backgroundImage = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg",
-                morelikethis = listOf("Harry Potter" to "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg","Google" to "google_icon.png"),
-                genres = listOf("Magic","Mystery","Sci-fi")
-            )
-            //MovieDetailScreen(data)
-            HomeScreen()
-            //if u want to test test here
-
-
-
+    NavHost(navController = navController as NavHostController, startDestination = Screen.OtherPage.Welcome.route) {
+        composable(Screen.OtherPage.Welcome.bRoute){
+            WelcomeScreen()
         }
-        composable(Screen.BottomScreen.Movies.bRoute){
-
+        composable(Screen.OtherPage.AddProfile.bRoute){
+            AddProfile()
         }
-        composable(Screen.BottomScreen.Shows.bRoute){
-
+        composable(Screen.OtherPage.Login.bRoute){
+            LoginPage()
         }
-        composable(Screen.BottomScreen.WatchList.bRoute){
 
+        composable(Screen.OtherPage.Verification.bRoute){
+            verificationpage()
         }
+
 
 
 

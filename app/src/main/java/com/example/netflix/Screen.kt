@@ -33,7 +33,6 @@ sealed class Screen(val title: String, val route: String) {
         )
         object Welcome: OtherPage(
             "Welcome", "welcome",
-
         )
         object Login: OtherPage(
             "Login", "login"
@@ -43,6 +42,12 @@ sealed class Screen(val title: String, val route: String) {
         )
         object Verification: OtherPage(
             "Verification", "verification"
+        )
+        object AddProfile: OtherPage(
+            "AddProfile", "addprofile"
+        )
+        object EditProfile: OtherPage(
+            "EditProfile", "editprofile"
         )
 
     }
@@ -68,6 +73,9 @@ val introScreens= listOf(
     Screen.OtherPage.Welcome,
     Screen.OtherPage.Register,
     Screen.OtherPage.Login,
-    Screen.OtherPage.Verification
+    Screen.OtherPage.Verification,
+    Screen.OtherPage.AddProfile,
+    Screen.OtherPage.EditProfile,
+
 )
 
