@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,11 +18,11 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,18 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-
-
-
 
 
 @Composable
@@ -216,18 +210,36 @@ fun card2(item: ContentItem) {
                 .align(Alignment.BottomCenter),
             contentAlignment = Alignment.Center
         ) {
-            Button(
-                onClick = { /* TODO: Handle click */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow, // Play Icon
-                    contentDescription = "Play",
-                    modifier = Modifier.size(24.dp), // Adjust icon size
-                    tint = Color.Black
-                )
-                Spacer(modifier = Modifier.width(8.dp)) // Add space between icon and text
-                Text("Play", color = Color.Black)
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                ) {
+                Button(
+                    onClick = { /* TODO: Handle click */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow, // Play Icon
+                        contentDescription = "Play",
+                        modifier = Modifier.size(24.dp), // Adjust icon size
+                        tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Add space between icon and text
+                    Text("Play", color = Color.Black)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Button(
+                    onClick = { /* TODO: Handle click */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "More Info",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("More Info", color = Color.White)
+                }
             }
         }
     }

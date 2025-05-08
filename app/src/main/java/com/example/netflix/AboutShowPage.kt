@@ -1,6 +1,5 @@
 package com.example.netflix
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,9 +37,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 
+
 @Composable
-fun MovieDetailScreen(
-    data: movieDetails
+fun ShowDetailScreen(
+    data: showDetails
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
@@ -142,49 +140,7 @@ fun MovieDetailScreen(
                             modifier = Modifier.padding(30.dp).width(300.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.padding(8.dp).border(
-                                    border = BorderStroke(2.dp, Color.Transparent),
-                                    shape = RoundedCornerShape(20)
-                                )
-                                    .width(180.dp).border(
-                                        border = BorderStroke(2.dp, Color.Transparent),
-                                        shape = RoundedCornerShape(100)
-                                    ),
-                                colors = ButtonColors(
-                                    containerColor = Color(185, 40, 94),
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    disabledContainerColor = Color(185, 40, 94)
-                                )
-                            ) {
-                                Text("Watch Now")
-                            }
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.padding(8.dp).border(
-                                    border = BorderStroke(2.dp, Color.Transparent),
-                                    shape = RoundedCornerShape(20)
-                                )
-                                    .width(200.dp).border(
-                                        border = BorderStroke(2.dp, Color.White),
-                                        shape = RoundedCornerShape(100)
-                                    ),
-                                colors = ButtonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    disabledContainerColor = Color.Transparent
-                                )
-                            ) {
-                                Text("Trailer")
-                            }
-                        }
+
                         if (!data.morelikethis.isNullOrEmpty()) {
                             Column(modifier = Modifier.padding(30.dp, 8.dp)) {
                                 Text(
@@ -222,6 +178,12 @@ fun MovieDetailScreen(
                     }
                 }
             }
+
         }
     }
+
 }
+
+
+
+

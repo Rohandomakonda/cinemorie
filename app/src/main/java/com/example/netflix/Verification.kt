@@ -6,16 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -132,7 +130,7 @@ fun verificationpage() {
                     .padding(top = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
             ) {
-                Text("Register", color = Color.White)
+                Text("Verify", color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(16.dp))

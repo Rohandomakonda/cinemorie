@@ -2,7 +2,6 @@ package com.example.netflix
 
 
 import androidx.annotation.DrawableRes
-import com.example.netflix.Screen.BottomScreen.Home.icon
 
 sealed class Screen(val title: String, val route: String) {
 
@@ -30,6 +29,9 @@ sealed class Screen(val title: String, val route: String) {
         object Genre : OtherPage("Genre", "genre")
         object MovieInfo : OtherPage(
             "MovieInfo", "movieinfo"
+        )
+        object ShowInfo : OtherPage(
+            "ShowInfo", "showinfo"
         )
         object Welcome: OtherPage(
             "Welcome", "welcome",

@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val controller: NavController = rememberNavController()
                     val navBackStackEntry by controller.currentBackStackEntryAsState()
-                    val currentRoute =  Screen.OtherPage.Welcome.bRoute
+                    val currentRoute =  Screen.BottomScreen.Home.bRoute
                     if (currentRoute in introScreens.map { it.route }) {
                         Navigation1(navController = controller)
 
@@ -51,13 +51,16 @@ fun Navigation1(navController: NavController) {
 
     NavHost(navController = navController as NavHostController, startDestination = Screen.OtherPage.Welcome.route) {
         composable(Screen.OtherPage.Welcome.bRoute){
-            WelcomeScreen()
+            WelcomeScreen(navController)
         }
         composable(Screen.OtherPage.AddProfile.bRoute){
             AddProfile()
         }
         composable(Screen.OtherPage.Login.bRoute){
-            LoginPage()
+            LoginPage(navController)
+        }
+        composable(Screen.OtherPage.Register.bRoute){
+            RegisterPage(navController)
         }
 
         composable(Screen.OtherPage.Verification.bRoute){
