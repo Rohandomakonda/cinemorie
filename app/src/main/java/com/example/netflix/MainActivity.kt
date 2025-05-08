@@ -23,8 +23,8 @@ class MainActivity : ComponentActivity() {
 
                     //Main()
                     //verificationpage()
-                    profile()
-                    //AddProfile()
+                    //profile()
+                    AddProfile()
 
 
 

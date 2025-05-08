@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -42,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.text.input.KeyboardType
 
 @Preview
 @Composable
@@ -182,7 +185,9 @@ fun AddProfile() {
                     onValueChange = { profileName = it },
                     modifier = Modifier.fillMaxWidth(0.85f),
                     textStyle = TextStyle(color = Color.White),
-                    label = { Text("Profile Name", color = Color.White) }
+                    label = { Text("Profile Name", color = Color.White)
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Unspecified)
                 )
             }
         }
