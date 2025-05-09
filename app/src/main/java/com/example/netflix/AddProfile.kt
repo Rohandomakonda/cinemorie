@@ -110,13 +110,14 @@ fun AddProfile() {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    text = "Add Profile",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 if (!showSlider.value) {
-                    Text(
-                        text = "Add Profile",
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(
                         contentAlignment = Alignment.TopEnd,

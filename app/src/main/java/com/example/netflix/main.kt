@@ -127,7 +127,7 @@ fun Navigation(navController: NavController) {
 
         }
         composable(  Screen.OtherPage.Genre.bRoute){
-            GenrePage()
+            GenrePage(navController)
 
         }
         composable( Screen.OtherPage.MovieInfo.bRoute){
@@ -142,7 +142,7 @@ fun Navigation(navController: NavController) {
                 morelikethis = listOf("Harry Potter" to "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg","Google" to "google_icon.png"),
                 genres = listOf("Magic","Mystery","Sci-fi")
             )
-            MovieDetailScreen(data)
+            MovieDetailScreen(data,navController)
 
         }
         composable( Screen.OtherPage.ShowInfo.bRoute){

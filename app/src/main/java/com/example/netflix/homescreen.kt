@@ -1,6 +1,7 @@
 package com.example.netflix
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,7 +85,7 @@ fun HomeScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(genres) {
-                    Card1(it)
+                    Card1(it,navController)
                 }
             }
         }
@@ -108,7 +109,7 @@ fun HomeScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(genres) {
-                    Card(it)
+                    Card(it,navController)
                 }
             }
         }
@@ -117,10 +118,11 @@ fun HomeScreen(navController: NavController) {
 
 
 @Composable
-fun Card(item: ContentItem) {
+fun Card(item: ContentItem,navController: NavController) {
     Column(
         modifier = Modifier
             .width(100.dp)
+            .clickable{navController.navigate(Screen.OtherPage.MovieInfo.bRoute)}
     ) {
         Image(
             painter = rememberAsyncImagePainter(item.url),
@@ -136,7 +138,7 @@ fun Card(item: ContentItem) {
     }
 }
 @Composable
-fun Card1(item: ContentItem) {
+fun Card1(item: ContentItem,navController: NavController) {
     Column(
         modifier = Modifier
             .padding(horizontal = 8.dp)
@@ -147,6 +149,7 @@ fun Card1(item: ContentItem) {
                 .height(150.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
+                .clickable{navController.navigate(Screen.OtherPage.Genre.bRoute)}
         ) {
             Image(
                 painter = rememberAsyncImagePainter(item.url),
@@ -161,6 +164,7 @@ fun Card1(item: ContentItem) {
                     .fillMaxWidth()
                     .background(Color.Black.copy(alpha = 0.6f)) // black/60 background
                     .padding(8.dp)
+                    .clickable{}
             ) {
                 Text(
                     text = item.title,
@@ -215,7 +219,7 @@ fun card2(item: ContentItem,navController: NavController) {
                 horizontalArrangement = Arrangement.Center,
                 ) {
                 Button(
-                    onClick = { /* TODO: Handle click */ },
+                    onClick = { },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
                     Icon(

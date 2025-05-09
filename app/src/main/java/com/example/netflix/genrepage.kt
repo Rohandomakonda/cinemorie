@@ -1,33 +1,39 @@
 package com.example.netflix
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun GenrePage() {
+fun GenrePage(navController: NavController) {
     val genres = listOf(
         ContentItem(url = "https://www.tallengestore.com/cdn/shop/products/Fast_Furious_Presents_Hobbs_Shaw_-_Dwayne_Rock_Johnson_-_Jason_Statham_Idris_Alba_-_Tallenge_Hollywood_Action_Movie_Poster_dc2cfde0-101a-4bc4-a5c3-b469bc0c2fa8.jpg?v=1582543424", title = "Action"),
         ContentItem(url = "https://m.media-amazon.com/images/M/MV5BZjE0ZjgzMzYtMTAxYi00NGMzLThmZDktNzFlMzA2MWRmYWQ0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", title = "Romance"),
@@ -83,13 +89,12 @@ fun GenrePage() {
                         .heightIn(max = 10000.dp) // Ensure grid expands in LazyColumn
                 ) {
                     items(genres) { genre ->
-                        Card3(item = genre)
+                        Card3(item = genre,navController)
                     }
                 }
             }
         }
     }
-
 }
 
 
@@ -97,7 +102,7 @@ fun GenrePage() {
 
 
 @Composable
-fun Card3(item: ContentItem) {
+fun Card3(item: ContentItem,navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,6 +116,7 @@ fun Card3(item: ContentItem) {
                 .height(180.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)) // Rounded edges
+                .clickable{navController.navigate(Screen.OtherPage.MovieInfo.bRoute)}
         )
     }
 }

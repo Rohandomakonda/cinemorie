@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,12 +38,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun MovieDetailScreen(
-    data: movieDetails
+    data: movieDetails,
+    navController: NavController
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
@@ -197,7 +200,9 @@ fun MovieDetailScreen(
                                 LazyRow() {
                                     items(data.morelikethis) {(name,image)->
                                         val imagePainter = rememberAsyncImagePainter(image)
-                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)){
+                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)
+                                            .clickable{navController.navigate(Screen.OtherPage.MovieInfo.bRoute)}
+                                        ){
                                             Image(
                                                 painter = imagePainter,
                                                 contentDescription = "${name} picture",
