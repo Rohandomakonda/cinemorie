@@ -4,6 +4,7 @@ package com.example.netflix
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,10 +28,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import androidx.navigation.NavController
 
 fun darken(color: Color, factor: Float): Color {
     return Color(
@@ -44,7 +42,7 @@ fun darken(color: Color, factor: Float): Color {
 }
 
 @Composable
-fun appbar() {
+fun appbar(navController: NavController) {
 
         val violetColors = listOf(
 
@@ -79,6 +77,7 @@ fun appbar() {
                 fontSize = 24.sp,
                brush = gradient  // Light Purple 100))
             ),
+            modifier = Modifier.clickable{navController.navigate(Screen.BottomScreen.Home.bRoute)}
 
         )
         Row(){
@@ -135,8 +134,3 @@ fun gradient(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun appbarPreview(){
-    appbar()
-}

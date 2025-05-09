@@ -137,12 +137,11 @@ fun MovieDetailScreen(
                                 color = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = data.description,
                             fontSize = 15.sp,
                             color = Color.White,
-                            modifier = Modifier.padding(30.dp).width(300.dp)
+                            modifier = Modifier.padding(start=30.dp).width(300.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
@@ -185,7 +184,7 @@ fun MovieDetailScreen(
                                     disabledContainerColor = Color.Transparent
                                 )
                             ) {
-                                Text("Trailer")
+                                Text("+ Add to Watchlist")
                             }
                         }
                         if (!data.morelikethis.isNullOrEmpty()) {

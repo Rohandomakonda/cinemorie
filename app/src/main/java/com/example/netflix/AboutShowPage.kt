@@ -1,8 +1,10 @@
 package com.example.netflix
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -133,23 +136,25 @@ fun ShowDetailScreen(
                                 color = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = data.description,
                             fontSize = 15.sp,
                             color = Color.White,
-                            modifier = Modifier.padding(30.dp).width(300.dp)
+                            modifier = Modifier.padding(start = 30.dp).width(300.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         if (!data.episodes.isNullOrEmpty()) {
                             Spacer(modifier = Modifier.height(24.dp))
-                            Text(
-                                text = "Episodes",
-                                fontSize = 18.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(start = 30.dp)
-                            )
+                            Row {
+                                Text(
+                                    text = "Episodes",
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(start = 30.dp)
+                                )
+
+                            }
                             Column(modifier = Modifier.padding(30.dp)) {
                                 data.episodes.forEach { (epName, epData) ->
                                     val (epDesc, epImageUrl) = epData
@@ -160,21 +165,40 @@ fun ShowDetailScreen(
                                             .padding(vertical = 8.dp)
                                             .fillMaxWidth()
                                     ) {
-                                        Image(
-                                            painter = painter,
-                                            contentDescription = "$epName image",
-                                            modifier = Modifier
-                                                .height(150.dp)
-                                                .width(150.dp)
-                                                .clip(RoundedCornerShape(16.dp))
-                                                .background(Color.Gray)
-                                                .border(
-                                                    2.dp,
-                                                    Color.White,
-                                                    RoundedCornerShape(16.dp)
-                                                ),
-                                            contentScale = ContentScale.Crop
-                                        )
+                                        Box(modifier = Modifier.clickable{}
+                                        , contentAlignment = Alignment.Center) {
+                                            Image(
+                                                painter = painter,
+                                                contentDescription = "$epName image",
+                                                modifier = Modifier
+                                                    .height(150.dp)
+                                                    .width(150.dp)
+                                                    .clip(RoundedCornerShape(16.dp))
+                                                    .background(Color.Gray)
+                                                    .border(
+                                                        2.dp,
+                                                        Color.White,
+                                                        RoundedCornerShape(16.dp)
+                                                    ),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                            Box(modifier = Modifier.background(color = Color.Gray.copy(0.6f),CircleShape)) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PlayArrow,
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .clip(CircleShape)
+                                                        .border(
+                                                            border = BorderStroke(
+                                                                2.dp,
+                                                                Color.Black
+                                                            ), shape = CircleShape
+                                                        )
+                                                        .size(50.dp),
+                                                    tint = Color.Black
+                                                )
+                                            }
+                                        }
 
                                         Spacer(modifier = Modifier.width(12.dp))
 
