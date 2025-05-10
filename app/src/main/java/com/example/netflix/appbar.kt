@@ -81,7 +81,7 @@ fun appbar(navController: NavController) {
 
         )
         Row(){
-            IconButton(onClick = { /* Handle the click */ }) {
+            IconButton(onClick = { navController.navigate(Screen.OtherPage.Search.bRoute)}) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search Icon",
@@ -89,7 +89,7 @@ fun appbar(navController: NavController) {
                 )
             }
             Column() {
-                IconButton(onClick = { /* Handle the click */ }) {
+                IconButton(onClick = {navController.navigate(Screen.OtherPage.Profile.bRoute)}) {
                     Image(
                         painter = painterResource(id = R.drawable.red_hulk), // Replace with your image URL
                         contentDescription = "Profile Picture",
@@ -105,14 +105,10 @@ fun appbar(navController: NavController) {
                     style = TextStyle(
                         fontWeight = FontWeight.Bold, // Makes the text bold
                         fontSize = 12.sp,
-
-                    ))
+                    )
+                )
             }
-
-
         }
-
-
     }
 }
 

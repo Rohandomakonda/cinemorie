@@ -54,6 +54,9 @@ sealed class Screen(val title: String, val route: String) {
         object Profile: OtherPage(
             "Profile", "profile"
         )
+        object Search: OtherPage(
+            "Search","search"
+        )
 
     }
 
@@ -72,7 +75,6 @@ val screensInBottom = listOf(
 val otherScreens = listOf(
     Screen.OtherPage.Genre,
     Screen.OtherPage.MovieInfo,
-
 )
 val introScreens= listOf(
     Screen.OtherPage.Welcome,
@@ -81,6 +83,7 @@ val introScreens= listOf(
     Screen.OtherPage.Verification,
     Screen.OtherPage.AddProfile,
     Screen.OtherPage.EditProfile,
-    Screen.OtherPage.Profile
+    Screen.OtherPage.Profile,
+    Screen.OtherPage.Search
 )
 

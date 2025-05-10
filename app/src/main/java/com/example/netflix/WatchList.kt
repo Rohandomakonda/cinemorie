@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
@@ -107,10 +104,10 @@ fun WatchList(navController: NavController) {
 
 
     LazyColumn(
-       modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         items(movies){
-           watchlistcard(it)
+            watchlistcard(it)
 
         }
     }
@@ -128,7 +125,7 @@ fun watchlistcard(movieItem: movieDetails) {
             modifier = Modifier
                 .background(Color.Transparent)
                 .padding(8.dp)
-               // .border(BorderStroke(1.dp, Color.White)) // Correct usage
+            // .border(BorderStroke(1.dp, Color.White)) // Correct usage
         )
         {
             // Movie Thumbnail
@@ -178,7 +175,7 @@ fun watchlistcard(movieItem: movieDetails) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${movieItem.year} • ${movieItem.rating}⭐ • ${movieItem.genres.joinToString()}",
+                    text = "${movieItem.year} • ${movieItem.rating} ⭐ • ${movieItem.genres?.joinToString()}",
                     fontSize = 12.sp,
                     color = Color.LightGray
                 )
@@ -233,4 +230,3 @@ fun watchlistcard(movieItem: movieDetails) {
         }
     }
 }
-

@@ -182,7 +182,9 @@ fun Navigation(navController: NavController) {
            ShowDetailScreen(data)
 
         }
-
+        composable(Screen.OtherPage.Search.bRoute){
+            Search(navController)
+        }
 
 
     }

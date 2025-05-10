@@ -92,7 +92,7 @@ fun MovieDetailScreen(
                                 modifier = Modifier.padding(30.dp, 16.dp)
                             )
                             Text(
-                                text = data.tags,
+                                text = data.tags?:"",
                                 fontSize = 15.sp,
                                 color = Color.White,
                                 modifier = Modifier
@@ -114,7 +114,7 @@ fun MovieDetailScreen(
                         }
                         Spacer(modifier = Modifier.height(0.dp))
                         Text(
-                            text = data.genres.joinToString(),
+                            text = data.genres?.joinToString() ?: "",
                             fontSize = 15.sp,
                             color = Color.White,
                             modifier = Modifier.padding(30.dp, 2.dp)
@@ -138,7 +138,7 @@ fun MovieDetailScreen(
                             )
                         }
                         Text(
-                            text = data.description,
+                            text = data.description?:"",
                             fontSize = 15.sp,
                             color = Color.White,
                             modifier = Modifier.padding(start=30.dp).width(300.dp)

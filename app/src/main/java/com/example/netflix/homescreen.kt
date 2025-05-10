@@ -132,9 +132,6 @@ fun Card(item: ContentItem,navController: NavController) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp)),
         )
-
-
-
     }
 }
 @Composable

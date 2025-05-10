@@ -24,14 +24,13 @@ class MainActivity : ComponentActivity() {
             NetflixTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val controller: NavController = rememberNavController()
-                    val currentRoute =  Screen.OtherPage.ShowInfo.bRoute
+                    val currentRoute =  Screen.BottomScreen.Home.bRoute
                     if (currentRoute in introScreens.map { it.route }) {
                         Navigation1(navController = controller)
                     }
                     else {
                         Main()
                     }
-
                 }
             }
         }
@@ -54,7 +53,6 @@ fun Navigation1(navController: NavController) {
         composable(Screen.OtherPage.Register.bRoute){
             RegisterPage(navController)
         }
-
         composable(Screen.OtherPage.Verification.bRoute){
             verificationpage()
         }
