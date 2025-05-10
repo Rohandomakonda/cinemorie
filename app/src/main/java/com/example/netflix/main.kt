@@ -26,7 +26,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun Main(controller: NavController) {
@@ -191,9 +190,6 @@ fun Navigation(navController: NavController) {
         composable(Screen.OtherPage.Welcome.bRoute){
             WelcomeScreen(navController)
         }
-        composable(Screen.OtherPage.AddProfile.bRoute){
-            AddProfile()
-        }
         composable(Screen.OtherPage.Login.bRoute){
             LoginPage(navController)
         }
@@ -207,10 +203,10 @@ fun Navigation(navController: NavController) {
             Search(navController)
         }
         composable(Screen.OtherPage.AddProfile.bRoute){
-            AddProfile()
+            AddProfile(navController)
         }
         composable(Screen.OtherPage.EditProfile.bRoute){
-            EditProfile()
+            EditProfile(navController)
         }
 
         composable(Screen.OtherPage.Profile.bRoute){

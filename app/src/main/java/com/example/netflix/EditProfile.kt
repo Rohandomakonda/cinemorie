@@ -43,10 +43,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Preview
 @Composable
-fun EditProfile() {
+fun EditProfile(navController: NavController) {
     val violetColors = listOf(
         Color(0xFF4C1D95),
         Color(0xFF1E1B4B),
@@ -70,9 +71,6 @@ fun EditProfile() {
             .fillMaxSize()
             .background(gradient(true, darkVioletColors)),
         contentAlignment = Alignment.TopCenter,
-
-
-
         ) {
         Column(
             modifier = Modifier
@@ -82,13 +80,14 @@ fun EditProfile() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    .padding(top = 30.dp, start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Cancel",
                     modifier = Modifier.clickable {
+                        navController.navigate(Screen.OtherPage.Profile.bRoute)
                     },
                     color = Color.White,
                     fontSize = 20.sp
@@ -111,13 +110,15 @@ fun EditProfile() {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Edit Profile",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                )
                 if (!showSlider.value) {
-                    Text(
-                        text = "Edit Profile",
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(
                         contentAlignment = Alignment.TopEnd,

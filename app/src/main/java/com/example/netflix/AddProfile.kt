@@ -43,10 +43,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
-@Preview
 @Composable
-fun AddProfile() {
+fun AddProfile(navController: NavController) {
     val violetColors = listOf(
         Color(0xFF4C1D95),
         Color(0xFF1E1B4B),
@@ -89,6 +89,7 @@ fun AddProfile() {
                 Text(
                     text = "Cancel",
                     modifier = Modifier.clickable {
+                        navController.navigate(Screen.OtherPage.Profile.bRoute)
                     },
                     color = Color.White,
                     fontSize = 20.sp

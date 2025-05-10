@@ -122,7 +122,7 @@ fun profile(navController: NavController) {
                                 CircleShape
                             )
                             .clickable {
-                                navController.navigate(Screen.OtherPage.EditProfile.bRoute)
+                                navController.navigate(Screen.OtherPage.AddProfile.bRoute)
                             }
                             .padding(16.dp),
                         contentAlignment = Alignment.Center

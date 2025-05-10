@@ -132,7 +132,7 @@ fun MovieDetailScreen(
                             )
                             Spacer(modifier = Modifier.width(2.dp))  // Optional spacing between icon and text
                             Text(
-                                text = "${data.rating} ${data.year} ${data.ageRating}",
+                                text = "${data.rating} • ${data.year} • ${data.ageRating}",
                                 fontSize = 15.sp,
                                 color = Color.White
                             )
