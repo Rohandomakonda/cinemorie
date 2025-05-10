@@ -36,26 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
-fun levenshtein(a: String, b: String): Int {
-    val lenA = a.length
-    val lenB = b.length
-    val matrix = Array(lenA + 1) { IntArray(lenB + 1) }
 
-    for (i in 0..lenA) matrix[i][0] = i
-    for (j in 0..lenB) matrix[0][j] = j
-
-    for (i in 1..lenA) {
-        for (j in 1..lenB) {
-            val cost = if (a[i - 1].lowercase() == b[j - 1].lowercase()) 0 else 1
-            matrix[i][j] = minOf(
-                matrix[i - 1][j] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j - 1] + cost
-            )
-        }
-    }
-    return matrix[lenA][lenB]
-}
 
 fun getClosestMatchesByLevenshtein(search: String, list: List<movieDetails>): List<movieDetails> {
     val filtered = list.filter {
@@ -63,9 +44,7 @@ fun getClosestMatchesByLevenshtein(search: String, list: List<movieDetails>): Li
     }
 
     return filtered
-        .map { movie -> movie to levenshtein(search.lowercase(), movie.title.lowercase()) }
-        .sortedBy { it.second }
-        .map { it.first }
+
 }
 
 @Composable
@@ -129,37 +108,45 @@ fun Search(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(30))
-                    .width(50.dp),
+                    .width(50.dp)
+                    .padding(top=40.dp),
                 shape = RoundedCornerShape(100)
             )
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier,
-                state = rememberLazyGridState(),
-                contentPadding = PaddingValues(8.dp),
-                reverseLayout = false,
-                verticalArrangement = Arrangement.Top,
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                userScrollEnabled = true
-            ) {
-                items(searchItemsFound) { movie ->
-                    val movieName = movie.title
-                    val movieImage = movie.backgroundImage
-                    Image(
-                        painter = rememberAsyncImagePainter(movieImage),
-                        contentDescription = "${movieName} image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(160.dp)
-                            .width(200.dp)
-                            .clickable {
-                                navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
-                            }
-                            .padding(8.dp)
-                    )
-                }
+            if(searchItemsFound.equals(null)){
+                Text("No Results Found")
             }
+            else{
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier,
+                    state = rememberLazyGridState(),
+                    contentPadding = PaddingValues(8.dp),
+                    reverseLayout = false,
+                    verticalArrangement = Arrangement.Top,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    userScrollEnabled = true
+                ) {
+                    items(searchItemsFound) { movie ->
+                        val movieName = movie.title
+                        val movieImage = movie.backgroundImage
+                        Image(
+                            painter = rememberAsyncImagePainter(movieImage),
+                            contentDescription = "${movieName} image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .height(160.dp)
+                                .width(200.dp)
+                                .clickable {
+                                    navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                                }
+                                .padding(8.dp)
+                        )
+                    }
+                }
+
+            }
+
+
         }
     }
 }

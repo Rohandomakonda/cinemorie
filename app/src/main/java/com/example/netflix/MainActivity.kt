@@ -8,11 +8,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.netflix.ui.theme.NetflixTheme
 
@@ -24,39 +26,13 @@ class MainActivity : ComponentActivity() {
             NetflixTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val controller: NavController = rememberNavController()
-                    val currentRoute =  Screen.BottomScreen.Home.bRoute
-                    if (currentRoute in introScreens.map { it.route }) {
-                        Navigation1(navController = controller)
-                    }
-                    else {
-                        Main()
-                    }
+
+                        Main(controller)
                 }
             }
         }
     }
 }
 
-@Composable
-fun Navigation1(navController: NavController) {
 
-    NavHost(navController = navController as NavHostController, startDestination = Screen.OtherPage.Welcome.route) {
-        composable(Screen.OtherPage.Welcome.bRoute){
-            WelcomeScreen(navController)
-        }
-        composable(Screen.OtherPage.AddProfile.bRoute){
-            AddProfile()
-        }
-        composable(Screen.OtherPage.Login.bRoute){
-            LoginPage(navController)
-        }
-        composable(Screen.OtherPage.Register.bRoute){
-            RegisterPage(navController)
-        }
-        composable(Screen.OtherPage.Verification.bRoute){
-            verificationpage()
-        }
-
-    }
-}
 

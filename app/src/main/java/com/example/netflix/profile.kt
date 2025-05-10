@@ -103,7 +103,7 @@ fun profile(navController: NavController) {
                         .padding(16.dp) // Optional padding for the grid
                 ) {
                     items(profileList.value) { profile ->
-                        CircleImage3DEffect(profile)
+                        CircleImage3DEffect(profile,navController)
                     }
                 }
 
@@ -152,7 +152,7 @@ fun profile(navController: NavController) {
 
 
 @Composable
-fun CircleImage3DEffect(item: ProfileItem) {
+fun CircleImage3DEffect(item: ProfileItem,navController: NavController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(8.dp)
@@ -167,6 +167,7 @@ fun CircleImage3DEffect(item: ProfileItem) {
                         ambientColor = Color.Gray,
                         spotColor = Color.Black
                     )
+
             ) {
                 Image(
                     painter = painterResource(id = item.imageResId),
@@ -176,6 +177,9 @@ fun CircleImage3DEffect(item: ProfileItem) {
                         .fillMaxSize()
                         .clip(CircleShape)
                         .border(2.dp, Color.LightGray, CircleShape)
+                        .clickable {
+                            navController.navigate(Screen.BottomScreen.Home.bRoute)
+                        }
                 )
             }
 
@@ -196,6 +200,11 @@ fun CircleImage3DEffect(item: ProfileItem) {
                         contentDescription = "Edit",
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)
+                        .clickable {
+                            navController.navigate(Screen.OtherPage.EditProfile.bRoute)
+
+                        }
+
                     )
                 }
             }

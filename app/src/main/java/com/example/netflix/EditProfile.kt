@@ -97,6 +97,7 @@ fun EditProfile() {
                 Text(
                     text = "Done",
                     modifier = Modifier.clickable {
+
                     },
                     color = Color.White,
                     fontSize = 20.sp
@@ -112,7 +113,7 @@ fun EditProfile() {
             ) {
                 if (!showSlider.value) {
                     Text(
-                        text = "Add Profile",
+                        text = "Edit Profile",
                         color = Color.White,
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,

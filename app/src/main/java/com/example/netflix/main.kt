@@ -29,9 +29,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun Main() {
+fun Main(controller: NavController) {
     // Get the current route from NavController's back stack
-    val controller: NavController = rememberNavController()
+
     val navBackStackEntry by controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val violetColors = listOf(
@@ -91,10 +91,9 @@ fun Main() {
             }
 
     }
-
-
+if(currentRoute !in introScreens.map{it.route}) {
     Scaffold(
-        topBar = { appbar(navController=controller) },
+        topBar = { appbar(navController = controller) },
         bottomBar = { bottomBar() }
     ) { paddingValues ->
         Column(
@@ -105,8 +104,15 @@ fun Main() {
         ) {
             Navigation(navController = controller)
         }
-
     }
+}
+    else{
+        Navigation(navController = controller)
+    }
+
+
+
+
 }
 
 
@@ -182,13 +188,40 @@ fun Navigation(navController: NavController) {
            ShowDetailScreen(data)
 
         }
+        composable(Screen.OtherPage.Welcome.bRoute){
+            WelcomeScreen(navController)
+        }
+        composable(Screen.OtherPage.AddProfile.bRoute){
+            AddProfile()
+        }
+        composable(Screen.OtherPage.Login.bRoute){
+            LoginPage(navController)
+        }
+        composable(Screen.OtherPage.Register.bRoute){
+            RegisterPage(navController)
+        }
+        composable(Screen.OtherPage.Verification.bRoute){
+            verificationpage()
+        }
         composable(Screen.OtherPage.Search.bRoute){
             Search(navController)
         }
+        composable(Screen.OtherPage.AddProfile.bRoute){
+            AddProfile()
+        }
+        composable(Screen.OtherPage.EditProfile.bRoute){
+            EditProfile()
+        }
+
+        composable(Screen.OtherPage.Profile.bRoute){
+            profile(navController)
+        }
+
 
 
     }
 }
+
 
 
 
