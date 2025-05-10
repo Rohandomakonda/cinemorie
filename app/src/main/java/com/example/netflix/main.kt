@@ -44,7 +44,7 @@ fun Main() {
 
     // Bottom Bar (could be shown based on certain conditions)
     val bottomBar: @Composable () -> Unit = {
-        if (currentRoute == "home") {
+
             // Wrap NavigationBar in a Box to apply gradient background
             Box(
                 modifier = Modifier
@@ -89,7 +89,7 @@ fun Main() {
                     }
                 }
             }
-        }
+
     }
 
 
@@ -118,12 +118,15 @@ fun Navigation(navController: NavController) {
             HomeScreen(navController)
         }
        composable(Screen.BottomScreen.Movies.bRoute){
+           Movies(navController)
 
        }
         composable(Screen.BottomScreen.Shows.bRoute){
+            TvShows(navController)
 
         }
         composable(Screen.BottomScreen.WatchList.bRoute){
+           // WatchList(navController)
 
         }
         composable(  Screen.OtherPage.Genre.bRoute){

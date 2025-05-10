@@ -1,4 +1,6 @@
 package com.example.netflix
+
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun GenrePage(navController: NavController) {
+fun TvShows(navController: NavController) {
     val violetGradient = listOf(
         Color(0xFF4C1D95),
         Color(0xFF1E1B4B),
@@ -115,12 +117,6 @@ fun GenrePage(navController: NavController) {
         }
     }
 }
-
-
-
-
-
-
 
 
 
