@@ -48,7 +48,7 @@ fun Main() {
             // Wrap NavigationBar in a Box to apply gradient background
             Box(
                 modifier = Modifier
-                    .height(70.dp)
+                    .height(80.dp)
                     .fillMaxWidth()
                     .background(
                         darken(Color(0xFF1E1B4B), 0.5f),
@@ -126,7 +126,7 @@ fun Navigation(navController: NavController) {
 
         }
         composable(Screen.BottomScreen.WatchList.bRoute){
-           // WatchList(navController)
+            WatchList(navController)
 
         }
         composable(  Screen.OtherPage.Genre.bRoute){

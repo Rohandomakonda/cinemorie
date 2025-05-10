@@ -60,7 +60,7 @@ fun GenrePage(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(gradient(true, darkVioletColors))
-            .padding(bottom = 16.dp) // give some space at the end
+            .padding(bottom = 16.dp)
     ) {
         item {
             card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"),navController)
