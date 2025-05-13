@@ -109,7 +109,7 @@ fun Movies(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(genres) {
-                    Card(it,navController)
+                   // Card(it,navController)
                 }
             }
         }

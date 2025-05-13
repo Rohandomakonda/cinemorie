@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize") // This line should work now
 }
+
 
 android {
     namespace = "com.example.netflix"
@@ -40,6 +42,26 @@ android {
 }
 
 dependencies {
+    // Retrofit & Gson
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+// Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+//videoplayer
+    implementation ("com.google.android.exoplayer:exoplayer:2.18.1")  // Or the latest version
+
+    implementation( "androidx.compose.material:material-icons-extended:1.4.3")
+
+
+// ViewModel + LiveData (for MVM / Jetpack Compose)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+// Optional: OkHttp logging (for network debugging)
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+
     implementation("androidx.compose.material3:material3:1.1.0")
     implementation("org.apache.commons:commons-text:1.10.0")
     implementation("io.coil-kt:coil-compose:2.5.0")

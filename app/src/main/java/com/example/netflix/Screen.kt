@@ -57,6 +57,9 @@ sealed class Screen(val title: String, val route: String) {
         object Search: OtherPage(
             "Search","search"
         )
+        object FullVideoScreen: OtherPage(
+            "FullVideoScreen","fullScreenVideo"
+        )
 
     }
 
@@ -84,6 +87,7 @@ val introScreens= listOf(
     Screen.OtherPage.AddProfile,
     Screen.OtherPage.EditProfile,
     Screen.OtherPage.Profile,
-    Screen.OtherPage.Search
+    Screen.OtherPage.Search,
+    Screen.OtherPage.FullVideoScreen,
 )
 

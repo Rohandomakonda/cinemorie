@@ -1,5 +1,7 @@
 package com.example.netflix
 
+import android.util.Base64
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,16 +47,30 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun MovieDetailScreen(
-    data: movieDetails,
+
     navController: NavController
 ) {
+    val data = remember {
+        navController.previousBackStackEntry?.savedStateHandle?.get<Movie>("movie")
+    }
+
+// You can now use the 'movie' object, for example:
+    if (data != null) {
+        // Show movie details in UI
+        Log.d("MovieInfo", "Received movie: $data")
+    } else {
+        Log.d("MovieInfo", "No movie received!")
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        AsyncImage(
-            model = data.backgroundImage,
-            contentDescription = "${data.title} Background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        if (data != null) {
+            AsyncImage(
+                model = data.thumbnailUrl,
+                contentDescription = "${data.title} Background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,15 +101,17 @@ fun MovieDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
+                            if (data != null) {
+                                Text(
+                                    text = data.title,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(30.dp, 16.dp)
+                                )
+                            }
                             Text(
-                                text = data.title,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.padding(30.dp, 16.dp)
-                            )
-                            Text(
-                                text = data.tags?:"",
+                                text = "A",
                                 fontSize = 15.sp,
                                 color = Color.White,
                                 modifier = Modifier
@@ -113,12 +132,14 @@ fun MovieDetailScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(0.dp))
-                        Text(
-                            text = data.genres?.joinToString() ?: "",
-                            fontSize = 15.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(30.dp, 2.dp)
-                        )
+                        if (data != null) {
+                            Text(
+                                text = data.genre?: "",
+                                fontSize = 15.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(30.dp, 2.dp)
+                            )
+                        }
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -131,25 +152,32 @@ fun MovieDetailScreen(
                                 modifier = Modifier.size(16.dp)  // Optional: set icon size
                             )
                             Spacer(modifier = Modifier.width(2.dp))  // Optional spacing between icon and text
+                            if (data != null) {
+                                Text(
+                                    text = "${data.rating} • ${data.releaseDate} • ${data.rating}",
+                                    fontSize = 15.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        if (data != null) {
                             Text(
-                                text = "${data.rating} • ${data.year} • ${data.ageRating}",
+                                text = data.description?:"",
                                 fontSize = 15.sp,
-                                color = Color.White
+                                color = Color.White,
+                                modifier = Modifier.padding(start=30.dp).width(300.dp)
                             )
                         }
-                        Text(
-                            text = data.description?:"",
-                            fontSize = 15.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(start=30.dp).width(300.dp)
-                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.Bottom
                         ) {
+                            if(data!=null){
                             Button(
-                                onClick = {},
+                                onClick = { navController.currentBackStackEntry?.savedStateHandle?.set("movie", data)
+                                    navController.navigate( Screen.OtherPage.FullVideoScreen.bRoute)
+                                },
                                 modifier = Modifier.padding(8.dp).border(
                                     border = BorderStroke(2.dp, Color.Transparent),
                                     shape = RoundedCornerShape(20)
@@ -167,6 +195,7 @@ fun MovieDetailScreen(
                             ) {
                                 Text("Watch Now")
                             }
+                                }
                             Button(
                                 onClick = {},
                                 modifier = Modifier.padding(8.dp).border(
@@ -187,42 +216,42 @@ fun MovieDetailScreen(
                                 Text("+ Add to Watchlist")
                             }
                         }
-                        if (!data.morelikethis.isNullOrEmpty()) {
-                            Column(modifier = Modifier.padding(30.dp, 8.dp)) {
-                                Text(
-                                    text = "More Like this: ",
-                                    fontSize = 15.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding()
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                LazyRow() {
-                                    items(data.morelikethis) {(name,image)->
-                                        val imagePainter = rememberAsyncImagePainter(image)
-                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)
-                                            .clickable{navController.navigate(Screen.OtherPage.MovieInfo.bRoute)}
-                                        ){
-                                            Image(
-                                                painter = imagePainter,
-                                                contentDescription = "${name} picture",
-                                                modifier = Modifier
-                                                    .size(100.dp)
-                                                    .clip(RoundedCornerShape(20))
-                                                    .background(Color.Gray, RoundedCornerShape(20))
-                                                    .border(2.dp, Color.White, RoundedCornerShape(20)),
-                                                contentScale = ContentScale.Crop
-                                            )
-                                            Spacer(modifier = Modifier.height(6.dp))
-                                            Text(
-                                                text = name,
-                                                fontSize = 15.sp,
-                                                color = Color.White
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+//                        if (!data.morelikethis.isNullOrEmpty()) {
+//                            Column(modifier = Modifier.padding(30.dp, 8.dp)) {
+//                                Text(
+//                                    text = "More Like this: ",
+//                                    fontSize = 15.sp,
+//                                    color = Color.White,
+//                                    modifier = Modifier.padding()
+//                                )
+//                                Spacer(modifier = Modifier.height(16.dp))
+//                                LazyRow() {
+//                                    items(data.morelikethis) {(name,image)->
+//                                        val imagePainter = rememberAsyncImagePainter(image)
+//                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)
+//                                            .clickable{navController.navigate(Screen.OtherPage.MovieInfo.bRoute)}
+//                                        ){
+//                                            Image(
+//                                                painter = imagePainter,
+//                                                contentDescription = "${name} picture",
+//                                                modifier = Modifier
+//                                                    .size(100.dp)
+//                                                    .clip(RoundedCornerShape(20))
+//                                                    .background(Color.Gray, RoundedCornerShape(20))
+//                                                    .border(2.dp, Color.White, RoundedCornerShape(20)),
+//                                                contentScale = ContentScale.Crop
+//                                            )
+//                                            Spacer(modifier = Modifier.height(6.dp))
+//                                            Text(
+//                                                text = name,
+//                                                fontSize = 15.sp,
+//                                                color = Color.White
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
