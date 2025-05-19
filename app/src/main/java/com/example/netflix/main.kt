@@ -1,7 +1,6 @@
 package com.example.netflix
 
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,11 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
 
 @Composable
 fun Main(controller: NavController) {
@@ -149,37 +146,8 @@ fun Navigation(navController: NavController) {
 
         }
         composable( Screen.OtherPage.ShowInfo.bRoute){
-            val data =  showDetails(
-                title = "Harry Potter",
-                description = "blah blah",
-                tags = "A",
-                rating = 9.3,
-                year = 2001,
-                ageRating = "13+",
-                backgroundImage = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg",
-                episodes = listOf(
-            "Pilot" to (
-                    "Rick moves in with his daughter's family and quickly exerts his influence over grandson Morty." to
-                            "https://rickandmortyapi.com/api/episode/1/image"
-                    ),
-            "Lawnmower Dog" to (
-                    "Rick and Morty enter the dreams of Morty's teacher to improve his grades." to
-                            "https://rickandmortyapi.com/api/episode/2/image"
-                    ),
-            "Anatomy Park" to (
-                    "Rick miniaturizes Morty and sends him into a homeless man’s body to save Anatomy Park." to
-                            "https://rickandmortyapi.com/api/episode/3/image"
-                    ),
-            "M. Night Shaym-Aliens!" to (
-                    "Rick, Morty, and Jerry are held captive in a virtual reality by aliens." to
-                            "https://rickandmortyapi.com/api/episode/4/image"
-                    )
-            )
-            ,
-                morelikethis = listOf("Harry Potter" to "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg","Google" to "google_icon.png"),
-                genres = listOf("Magic","Mystery","Sci-fi")
-            )
-           ShowDetailScreen(data)
+
+           ShowDetailScreen(navController)
 
         }
         composable(Screen.OtherPage.Welcome.bRoute){
@@ -213,6 +181,13 @@ fun Navigation(navController: NavController) {
         ) {
 
                 FullScreenVideoScreen(navController)
+
+        }
+        composable(
+            Screen.OtherPage.ShowFullScreenVideo.bRoute
+        ) {
+
+            ShowFullScreenVideo(navController)
 
         }
 

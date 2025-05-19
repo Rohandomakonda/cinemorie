@@ -1,4 +1,5 @@
 package com.example.netflix
+
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,12 +29,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.netflix.retrofit.MovieApi
-
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -67,13 +60,12 @@ fun HomeScreen(navController: NavController) {
         ContentItem(url = "https://www.discountdisplays.co.uk/our-blog/wp-content/uploads/the-hangover-movie-poster.jpg", title = "Comedy"),
         ContentItem(url = "https://i.pinimg.com/736x/71/3c/bd/713cbd0590734a208fe5e8796715a6cf.jpg", title = "Thriller")
     )
-
-    val movieViewModel: MovieViewModel = viewModel()
-    val movies by movieViewModel.movies
-    val isLoading by movieViewModel.isLoading
-
-
-
+//    val showViewModel: ShowViewModel = viewModel()
+//    val shows by showViewModel.shows
+//    val isLoading by showViewModel.isLoading
+      val movieViewModel: MovieViewModel = viewModel()
+      val movies by movieViewModel.movies
+      val isLoading by movieViewModel.isLoading
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -131,33 +123,26 @@ fun HomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(movies) { movie ->
-                        Card(movie, navController)
+                        MovieCard(movie,navController)
                     }
                 }
             }
         }
-
-
-
-
     }
 }
 
 
 @Composable
-fun Card(item: Movie,navController: NavController) {
+fun ShowCard(item: Series,navController: NavController) {
     Column(
         modifier = Modifier
             .width(100.dp)
             .clickable {
-                Log.d("MovieInfo", "Setting movie: $item")
+                Log.d("ShowInfo", "Setting Show: $item")
                 // When you click on a movie item, navigate to MovieInfo
-                navController.currentBackStackEntry?.savedStateHandle?.set("movie", item)
-                navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
-
-
+                navController.currentBackStackEntry?.savedStateHandle?.set("series", item)
+                navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
             }
-
     ) {
         Image(
             painter = rememberAsyncImagePainter(item.thumbnailUrl),
@@ -169,6 +154,29 @@ fun Card(item: Movie,navController: NavController) {
         )
     }
 }
+@Composable
+fun MovieCard(item: Movie,navController: NavController) {
+    Column(
+        modifier = Modifier
+            .width(100.dp)
+            .clickable {
+                Log.d("MovieInfo", "Setting Movie: $item")
+                // When you click on a movie item, navigate to MovieInfo
+                navController.currentBackStackEntry?.savedStateHandle?.set("movie", item)
+                navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
+            }
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(item.thumbnailUrl),
+            contentDescription = item.title,
+            modifier = Modifier
+                .height(150.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp)),
+        )
+    }
+}
+
 @Composable
 fun Card1(item: ContentItem,navController: NavController) {
     Column(

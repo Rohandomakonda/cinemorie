@@ -43,5 +43,38 @@ data class Movie(
     val thumbnailUrl: String
 ) : Parcelable
 
+@Parcelize
+data class Series(
+    val seriesId: Long,
+    val title: String,
+    val description: String,
+    val releaseDate: String,
+    val language: String,
+    val genres: String,
+    val thumbnailUrl: String,
+    val seasons: ArrayList<Season> = arrayListOf()
+) : Parcelable
+
+@Parcelize
+data class Season(
+    val seasonid: Long,
+    val seasonnumber: Int,
+    val releaseDate: String,
+    val episodecount: Int,
+    val episodes: ArrayList<Episode> = arrayListOf()
+) : Parcelable
+
+@Parcelize
+data class Episode(
+    val episodeId: Long,
+    val episodeNumber: Int,
+    val title: String,
+    val duration: Int,
+    val releaseDate: String,
+    val fileUrl: String,
+    val thumbnailUrl: String
+) : Parcelable
+
+
 
 

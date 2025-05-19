@@ -60,6 +60,9 @@ sealed class Screen(val title: String, val route: String) {
         object FullVideoScreen: OtherPage(
             "FullVideoScreen","fullScreenVideo"
         )
+        object ShowFullScreenVideo: OtherPage(
+            "ShowFullScreenVideo","showFullScreenVideo"
+        )
 
     }
 
@@ -89,5 +92,6 @@ val introScreens= listOf(
     Screen.OtherPage.Profile,
     Screen.OtherPage.Search,
     Screen.OtherPage.FullVideoScreen,
+    Screen.OtherPage.ShowFullScreenVideo
 )
 
