@@ -139,16 +139,11 @@ fun Navigation(navController: NavController) {
 
         }
         composable( Screen.OtherPage.MovieInfo.bRoute){
-
-
                 MovieDetailScreen( navController)
-
 
         }
         composable( Screen.OtherPage.ShowInfo.bRoute){
-
            ShowDetailScreen(navController)
-
         }
         composable(Screen.OtherPage.Welcome.bRoute){
             WelcomeScreen(navController)

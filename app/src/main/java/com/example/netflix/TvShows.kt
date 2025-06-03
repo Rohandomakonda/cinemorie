@@ -112,9 +112,9 @@ fun showCard(item: Series,navController: NavController) {
         modifier = Modifier
             .width(100.dp)
             .clickable {
-                Log.d("ShowInfo", "Setting movie: $item")
+                Log.d("ShowInfo", "Setting Show: $item")
                 navController.currentBackStackEntry?.savedStateHandle?.set("series", item)
-                navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
             }
 
     ) {

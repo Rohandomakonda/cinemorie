@@ -60,12 +60,12 @@ fun HomeScreen(navController: NavController) {
         ContentItem(url = "https://www.discountdisplays.co.uk/our-blog/wp-content/uploads/the-hangover-movie-poster.jpg", title = "Comedy"),
         ContentItem(url = "https://i.pinimg.com/736x/71/3c/bd/713cbd0590734a208fe5e8796715a6cf.jpg", title = "Thriller")
     )
-//    val showViewModel: ShowViewModel = viewModel()
-//    val shows by showViewModel.shows
-//    val isLoading by showViewModel.isLoading
-      val movieViewModel: MovieViewModel = viewModel()
-      val movies by movieViewModel.movies
-      val isLoading by movieViewModel.isLoading
+    val showViewModel: ShowViewModel = viewModel()
+    val shows by showViewModel.shows
+    val isLoading by showViewModel.isLoading
+//      val movieViewModel: MovieViewModel = viewModel()
+//      val movies by movieViewModel.movies
+//      val isLoading by movieViewModel.isLoading
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -114,7 +114,7 @@ fun HomeScreen(navController: NavController) {
                 Log.d("UI", "Loading is true")
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
             } else {
-                Log.d("UI", "Loading is false, showing ${movies.size} movies")
+                Log.d("UI", "Loading is false, showing ${shows.size} movies")
                 LazyHorizontalGrid(
                     rows = GridCells.Fixed(1),
                     modifier = Modifier
@@ -122,8 +122,8 @@ fun HomeScreen(navController: NavController) {
                         .height(180.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(movies) { movie ->
-                        MovieCard(movie,navController)
+                    items(shows) { show ->
+                        showCard(show,navController)
                     }
                 }
             }
@@ -138,7 +138,7 @@ fun ShowCard(item: Series,navController: NavController) {
         modifier = Modifier
             .width(100.dp)
             .clickable {
-                Log.d("ShowInfo", "Setting Show: $item")
+                Log.d("ShowInfo", "Setting Show: ${item.seasons[0].episodes}")
                 // When you click on a movie item, navigate to MovieInfo
                 navController.currentBackStackEntry?.savedStateHandle?.set("series", item)
                 navController.navigate(Screen.OtherPage.ShowInfo.bRoute)

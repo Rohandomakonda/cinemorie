@@ -81,6 +81,7 @@ val screensInBottom = listOf(
 val otherScreens = listOf(
     Screen.OtherPage.Genre,
     Screen.OtherPage.MovieInfo,
+    Screen.OtherPage.ShowInfo
 )
 val introScreens= listOf(
     Screen.OtherPage.Welcome,

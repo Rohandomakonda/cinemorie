@@ -58,9 +58,9 @@ data class Series(
 @Parcelize
 data class Season(
     val seasonid: Long,
-    val seasonnumber: Int,
+    val seasonNumber: Int,
     val releaseDate: String,
-    val episodecount: Int,
+    val episodeCount: Int,
     val episodes: ArrayList<Episode> = arrayListOf()
 ) : Parcelable
 

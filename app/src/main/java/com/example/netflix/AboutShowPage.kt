@@ -48,18 +48,33 @@ fun ShowDetailScreen(
 ) {
     val data = remember {
         navController.previousBackStackEntry?.savedStateHandle?.get<Series>("series")
+    }?.let { series ->
+        series.copy(
+            seasons = ArrayList(
+                series.seasons
+                    .sortedBy { it.seasonNumber }
+                    .map { season ->
+                        season.copy(
+                            episodes = ArrayList(season.episodes.sortedBy { it.episodeNumber })
+                        )
+                    }
+            )
+        )
     }
+    if (data != null) {
+        for(episodes in data?.seasons[0]?.episodes!!){
+            Log.d("Episodes", episodes.episodeNumber.toString())
+        }
+    }
+
 
     if (data != null) {
         Log.d("ShowInfo", "Received show: $data")
     } else {
         Log.d("ShowInfo", "No show received!")
     }
-    if (data != null) {
-        Log.d("ShowInfo", "Received show: ${data.seasons[0].episodes[0].thumbnailUrl}")
-    } else {
-        Log.d("ShowInfo", "No show received!")
-    }
+
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
@@ -187,7 +202,7 @@ fun ShowDetailScreen(
 
                                 seasons.forEach { season ->
                                     Text(
-                                        text = "Season ${season.seasonnumber}",
+                                        text = "Season ${season.seasonNumber}",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = Color.LightGray,
@@ -206,6 +221,7 @@ fun ShowDetailScreen(
                                             Box(
                                                 modifier = Modifier.clickable {
                                                     navController.currentBackStackEntry?.savedStateHandle?.set("episode", episode)
+                                                    navController.currentBackStackEntry?.savedStateHandle?.set("series", data)
                                                     navController.navigate(Screen.OtherPage.ShowFullScreenVideo.bRoute)
                                                 },
                                                 contentAlignment = Alignment.Center

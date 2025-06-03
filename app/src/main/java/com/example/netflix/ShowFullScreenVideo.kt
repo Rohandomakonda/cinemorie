@@ -19,10 +19,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,52 +53,111 @@ import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowFullScreenVideo(navController: NavHostController) {
+fun ShowFullScreenVideo(
+    navController: NavHostController
+) {
     val context = LocalContext.current
     val showControls = remember { mutableStateOf(true) }
 
-    val episode = remember {
-        navController.previousBackStackEntry?.savedStateHandle?.get<Episode>("episode")
-    }
+    val initialEpisode = navController.previousBackStackEntry?.savedStateHandle?.get<Episode>("episode")
+    val series = navController.previousBackStackEntry?.savedStateHandle?.get<Series>("series")
 
-    if (episode == null) {
-        Log.d("ShowInfo", "No movie received!")
+    if (initialEpisode == null || series == null) {
+        Log.d("ShowFullScreenVideo", "Episode or Series data not received!")
         return
     }
 
-    val decodedVideoData = Base64.decode(episode.fileUrl, Base64.DEFAULT)
+    // State holding current episode being played
+    val currentEpisode = remember { mutableStateOf(initialEpisode) }
 
-    val videoFile = remember {
+    // Function to get next episode of the series relative to current episode
+    fun getNextEpisode(series: Series, currentEpisode: Episode): Episode? {
+        // Find the season that contains the current episode by episodeId
+        val currentSeason = series.seasons.find { season ->
+            season.episodes.any { it.episodeId == currentEpisode.episodeId }
+        } ?: return null
+
+        val sortedEpisodes = currentSeason.episodes.sortedBy { it.episodeNumber }
+
+        // Find current episode index using episodeNumber match
+        val currentIndex = sortedEpisodes.indexOfFirst { it.episodeNumber == currentEpisode.episodeNumber }
+        if (currentIndex == -1) return null
+
+        // Check if next episode exists in current season
+        if (currentIndex + 1 < sortedEpisodes.size) {
+            return sortedEpisodes[currentIndex + 1]
+        }
+
+        // Else, check the next season
+        val sortedSeasons = series.seasons.sortedBy { it.seasonNumber }
+        val currentSeasonIndex = sortedSeasons.indexOfFirst { it.seasonid == currentSeason.seasonid }
+        if (currentSeasonIndex == -1) return null
+
+        if (currentSeasonIndex + 1 < sortedSeasons.size) {
+            return sortedSeasons[currentSeasonIndex + 1].episodes.minByOrNull { it.episodeNumber }
+        }
+
+        // No next episode found
+        return null
+    }
+
+
+
+
+
+
+    val nextEpisode = getNextEpisode(series, currentEpisode.value)
+
+    // Create player instance and release when composable disposes
+    val exoPlayer = remember { ExoPlayer.Builder(context).build() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    // Manage video file and URI for current episode, update when episode changes
+    val videoFileAndUri = remember(currentEpisode.value) {
+        // Clean old temp files if needed (optional)
+        // Decode base64 and write to temp file
+        val decodedVideoData = Base64.decode(currentEpisode.value.fileUrl, Base64.DEFAULT)
         val tempFile = File.createTempFile("temp_video", ".mp4", context.cacheDir)
         FileOutputStream(tempFile).use { it.write(decodedVideoData) }
-        tempFile
+        Uri.fromFile(tempFile) to tempFile
     }
-    val videoUri = remember { Uri.fromFile(videoFile) }
 
-    val player = remember { ExoPlayer.Builder(context).build() }
+    val videoUri = videoFileAndUri.first
+    val videoFile = videoFileAndUri.second
+
+    // Playback control states
     val isPlaying = remember { mutableStateOf(true) }
     val position = remember { mutableStateOf(0L) }
     val duration = remember { mutableStateOf(1L) }
     val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
 
-    LaunchedEffect(Unit) {
+    // Update player media source and play on episode change
+    LaunchedEffect(currentEpisode.value) {
         val dataSourceFactory = DefaultDataSourceFactory(context, "user-agent")
         val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(MediaItem.fromUri(videoUri))
 
-        player.setMediaSource(mediaSource)
-        player.prepare()
-        player.play()
+        exoPlayer.setMediaSource(mediaSource)
+        exoPlayer.prepare()
+        exoPlayer.play()
+    }
 
-        player.addListener(object : Player.Listener {
+    // Listener to update playing state
+    LaunchedEffect(exoPlayer) {
+        exoPlayer.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlayingNow: Boolean) {
                 isPlaying.value = isPlayingNow
             }
         })
 
         while (true) {
-            position.value = player.currentPosition
-            duration.value = player.duration.coerceAtLeast(1L)
+            position.value = exoPlayer.currentPosition
+            duration.value = exoPlayer.duration.coerceAtLeast(1L)
             kotlinx.coroutines.delay(500)
         }
     }
@@ -110,7 +171,7 @@ fun ShowFullScreenVideo(navController: NavHostController) {
         AndroidView(factory = {
             PlayerView(context).apply {
                 useController = false
-                this.player = player
+                player = exoPlayer
                 setShutterBackgroundColor(android.graphics.Color.BLACK)
             }
         }, modifier = Modifier.fillMaxSize())
@@ -120,18 +181,16 @@ fun ShowFullScreenVideo(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Top Spacer: Adding empty space at the top
-                Spacer(modifier = Modifier.height(screenHeightDp/2)) // Adjust height based on your preference
+                Spacer(modifier = Modifier.height(screenHeightDp / 2))
 
-                // Center: Play/Pause
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     IconButton(
                         onClick = {
-                            if (player.isPlaying) player.pause() else player.play()
-                            isPlaying.value = player.isPlaying
+                            if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
+                            isPlaying.value = exoPlayer.isPlaying
                         },
                         modifier = Modifier
                             .size(80.dp)
@@ -146,101 +205,99 @@ fun ShowFullScreenVideo(navController: NavHostController) {
                     }
                 }
 
-                // Spacer between play button and bottom controls
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Bottom: Seek bar + time + controls
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
                 ) {
-                    // Duration bar (seek bar)
-                    androidx.compose.material3.Slider(
+                    Slider(
                         value = position.value.toFloat(),
-                        onValueChange = { player.seekTo(it.toLong()) },
+                        onValueChange = { exoPlayer.seekTo(it.toLong()) },
                         valueRange = 0f..duration.value.toFloat(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         colors = SliderDefaults.colors(
-                            thumbColor = Color.Transparent, // Set to transparent to avoid default drawing
+                            thumbColor = Color.Transparent,
                             activeTrackColor = Color.Red,
                             inactiveTrackColor = Color.Gray
                         ),
                         thumb = {
-                            // Custom white circular thumb
                             Box(
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .clip(CircleShape) // You can tweak the size
+                                    .clip(CircleShape)
                                     .background(Color.White, shape = CircleShape)
                             )
                         }
                     )
 
-                    // Bottom row: rewind, forward, time
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 1.dp), // Reduced padding
+                            .padding(horizontal = 8.dp, vertical = 1.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            // Time display
                             Text(
-                                text = "${formatTime(position.value)} / ${formatTime(duration.value)}", // Displays formatted time
-                                color = Color.White, // Text color is set to white
-                                style = MaterialTheme.typography.bodySmall, // The style uses a small body text from the MaterialTheme
-                                modifier = Modifier.padding(2.dp) // Reduced padding for the Text element
+                                text = "${formatTime(position.value)} / ${formatTime(duration.value)}",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(2.dp)
                             )
 
                             Row {
                                 IconButton(onClick = {
-                                    player.seekTo((player.currentPosition - 10000).coerceAtLeast(0))
+                                    exoPlayer.seekTo((exoPlayer.currentPosition - 10000).coerceAtLeast(0))
                                 }) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.baseline_replay_10_24),
                                         contentDescription = "Rewind 10s",
                                         tint = Color.White,
-                                        modifier = Modifier.size(24.dp) // Reduced icon size
+                                        modifier = Modifier.size(24.dp)
                                     )
                                 }
 
                                 IconButton(onClick = {
-                                    player.seekTo((player.currentPosition + 10000).coerceAtMost(player.duration))
+                                    exoPlayer.seekTo((exoPlayer.currentPosition + 10000).coerceAtMost(exoPlayer.duration))
                                 }) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.baseline_forward_10_24),
                                         contentDescription = "Forward 10s",
                                         tint = Color.White,
-                                        modifier = Modifier.size(24.dp) // Reduced icon size
+                                        modifier = Modifier.size(24.dp)
                                     )
                                 }
                             }
                         }
 
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_fullscreen_exit_24),
-                                contentDescription = "Back",
-                                tint = Color.White,
-                                modifier = Modifier.size(32.dp) // Reduced back button size
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_fullscreen_exit_24),
+                                    contentDescription = "Back",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+
+                            if (nextEpisode != null) {
+                                Button(onClick = {
+                                    // Update currentEpisode state — this triggers recomposition and media reload
+                                    currentEpisode.value = nextEpisode
+                                }) {
+                                    Text("Next Episode")
+                                }
+                            }
                         }
                     }
-
                 }
             }
-        }
-    }
-
-
-
-    DisposableEffect(Unit) {
-        onDispose {
-            player.release()
         }
     }
 }
