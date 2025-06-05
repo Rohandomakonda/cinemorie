@@ -62,7 +62,7 @@ fun ShowDetailScreen(
         )
     }
     if (data != null) {
-        for(episodes in data?.seasons[0]?.episodes!!){
+        for(episodes in data?.seasons?.get(0)?.episodes!!){
             Log.d("Episodes", episodes.episodeNumber.toString())
         }
     }

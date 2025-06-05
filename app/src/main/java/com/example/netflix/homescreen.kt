@@ -62,10 +62,10 @@ fun HomeScreen(navController: NavController) {
     )
     val showViewModel: ShowViewModel = viewModel()
     val shows by showViewModel.shows
-    val isLoading by showViewModel.isLoading
-//      val movieViewModel: MovieViewModel = viewModel()
-//      val movies by movieViewModel.movies
-//      val isLoading by movieViewModel.isLoading
+//    val isLoading by showViewModel.isLoading
+      val movieViewModel: MovieViewModel = viewModel()
+      val movies by movieViewModel.movies
+      val isLoading by movieViewModel.isLoading
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -122,8 +122,8 @@ fun HomeScreen(navController: NavController) {
                         .height(180.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(shows) { show ->
-                        showCard(show,navController)
+                    items(movies) { Movie ->
+                        MovieCard(Movie,navController)
                     }
                 }
             }
@@ -163,7 +163,7 @@ fun MovieCard(item: Movie,navController: NavController) {
                 Log.d("MovieInfo", "Setting Movie: $item")
                 // When you click on a movie item, navigate to MovieInfo
                 navController.currentBackStackEntry?.savedStateHandle?.set("movie", item)
-                navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
+                navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
             }
     ) {
         Image(

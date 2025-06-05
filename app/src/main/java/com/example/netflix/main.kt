@@ -118,7 +118,10 @@ if(currentRoute !in introScreens.map{it.route}) {
 @Composable
 fun Navigation(navController: NavController) {
 
-    NavHost(navController = navController as NavHostController, startDestination = Screen.BottomScreen.Home.route) {
+    NavHost(navController = navController as NavHostController, startDestination = Screen.OtherPage.Welcome.bRoute) {
+        composable(Screen.OtherPage.Welcome.bRoute){
+            WelcomeScreen(navController)
+        }
         composable(Screen.BottomScreen.Home.bRoute) {
             HomeScreen(navController)
         }
@@ -145,9 +148,7 @@ fun Navigation(navController: NavController) {
         composable( Screen.OtherPage.ShowInfo.bRoute){
            ShowDetailScreen(navController)
         }
-        composable(Screen.OtherPage.Welcome.bRoute){
-            WelcomeScreen(navController)
-        }
+
         composable(Screen.OtherPage.Login.bRoute){
             LoginPage(navController)
         }
@@ -155,7 +156,7 @@ fun Navigation(navController: NavController) {
             RegisterPage(navController)
         }
         composable(Screen.OtherPage.Verification.bRoute){
-            verificationpage()
+            verificationpage(navController)
         }
         composable(Screen.OtherPage.Search.bRoute){
             Search(navController)

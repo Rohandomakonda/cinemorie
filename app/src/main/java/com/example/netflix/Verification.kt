@@ -1,5 +1,7 @@
 package com.example.netflix
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,15 +38,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.dtos.VerificationRequest
+import com.example.netflix.retrofit.authApi
+import kotlinx.coroutines.launch
 
-@Preview
+
 @Composable
-fun verificationpage() {
+fun verificationpage(navController: NavController ) {
     val lightPurple = Color(0xFF9F80C2)
     val pinkPurple = Color(0xFFEC6BF2)
     val LightBlue = Color(0xFF03A9F4)
-
+    val email = remember {
+        navController.previousBackStackEntry?.savedStateHandle?.get<String>("email")
+    }
+    Log.d("registering", "email: $email")
     val gradient = Brush.linearGradient(
         colors = listOf(lightPurple, pinkPurple)
     )
@@ -51,9 +62,10 @@ fun verificationpage() {
         Color(0xFF1E1B4B),
     )
     val darkVioletColors = violetGradient.map { darken(it, 0.5f) }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
+    var otp by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Background Image
         Image(
@@ -103,8 +115,8 @@ fun verificationpage() {
                 )
             }
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = otp,
+                onValueChange = { otp = it },
                 label = { Text("Enter the OTP", color = Color.White) },
                 leadingIcon = {
                     Icon(
@@ -124,7 +136,28 @@ fun verificationpage() {
             )
 
             Button(
-                onClick = { },
+                onClick =  {
+                    coroutineScope.launch {
+                        val request = email?.let { VerificationRequest(email = it, otp = otp) }
+
+                        try {
+                            val response = request?.let { authApi.verify(it) }
+
+                            if (response != null) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(context, "Verification successful", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(Screen.OtherPage.Login.bRoute)
+                                } else {
+                                    Toast.makeText(context, "Invalid OTP or email", Toast.LENGTH_SHORT).show()
+                                    Log.d("verify", "Failed: ${response.code()}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show()
+                            Log.d("verify", "Error: ${e.localizedMessage}")
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),

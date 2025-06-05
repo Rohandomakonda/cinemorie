@@ -1,5 +1,8 @@
 package com.example.netflix
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -25,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.dtos.RegisterRequest
+import kotlinx.coroutines.launch
+import com.example.netflix.retrofit.authApi
+
 
 @Composable
 fun RegisterPage(navController: NavController) {
@@ -52,11 +62,13 @@ fun RegisterPage(navController: NavController) {
         Color(0xFF1E1B4B),
     )
     val darkVioletColors = violetGradient.map { darken(it, 0.5f) }
-
-    var username by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background Image
@@ -102,8 +114,8 @@ fun RegisterPage(navController: NavController) {
             )
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = name,
+                onValueChange = { name = it },
                 label = { Text("Username", color = Color.White) },
                 leadingIcon = {
                     androidx.compose.material3.Icon(
@@ -199,11 +211,48 @@ fun RegisterPage(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { navController.navigate(Screen.OtherPage.Verification.bRoute) },
+                onClick = {
+                    if (confirmPassword == password) {
+                        coroutineScope.launch {
+                            loading = true
+                            val request = RegisterRequest(name, email, password)
+                            Log.d("registering", " typed info $request")
+                            try {
+                                val response = authApi.register(request)
+                                Log.d("registering", " response $response")
+                                loading = false  // ✅ Stop loading before navigating
+                                if (response.isSuccessful) {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("email", email)
+                                    navController.navigate(Screen.OtherPage.Verification.bRoute)
+                                } else {
+                                    println("Registration failed: ${response.code()}")
+                                }
+                            } catch (e: Exception) {
+                                loading = false
+                                println("Network error: ${e.localizedMessage}")
+                                Log.d("registering", " error: ${e.localizedMessage}")
+                            }
+                        }
+                    } else {
+                        // ❗ Show toast if passwords don't match
+
+
+                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
             ) {
-                Text("REGISTER", color = Color.White)
+                if (loading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Text("REGISTER", color = Color.White)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

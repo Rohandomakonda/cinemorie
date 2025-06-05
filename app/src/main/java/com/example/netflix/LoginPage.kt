@@ -1,5 +1,9 @@
 package com.example.netflix
 
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +23,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,12 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +48,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.dtos.LoginRequest
+import com.example.netflix.retrofit.authApi
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.launch
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
 fun LoginPage(navController: NavController) {
@@ -55,9 +70,52 @@ fun LoginPage(navController: NavController) {
         Color(0xFF1E1B4B),
     )
     val darkVioletColors = violetGradient.map { darken(it, 0.5f) }
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val authPrefs = remember { AuthPreferences(context) }
+    var isLoading by remember { mutableStateOf(false) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            Log.d("registering1", " account token $idToken")
+            if (idToken != null) {
+                coroutineScope.launch {
+                    try {
+                        val response = authApi.authenticateWithGoogle(mapOf("token" to idToken))
+                        if (response.isSuccessful) {
+                            val auth = response.body()!!
+                            AuthPreferences(context).saveAuthResponse(auth)
+                            Log.d("registering1", " account $auth")
+                            Toast.makeText(context, "Google Login Success", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Screen.BottomScreen.Home.bRoute)
+                        } else {
+                            Toast.makeText(context, "Login failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Network error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(context, "ID Token is null", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: ApiException) {
+            Log.e("GoogleSignIn", "Sign-In failed", e)
+            Toast.makeText(context, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken("753896419331-rqppag3k8locdjrcrm681049u7qfffbg.apps.googleusercontent.com") // replace with your web client ID
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Background Image
         Image(
@@ -107,9 +165,9 @@ fun LoginPage(navController: NavController) {
                 )
             }
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Enter the username", color = Color.White) },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Enter the email", color = Color.White) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -158,7 +216,11 @@ fun LoginPage(navController: NavController) {
             }
             Button(
                 onClick = {
-                    println("Login with Gmail clicked")
+                    googleSignInClient.signOut().addOnCompleteListener {
+                        val signInIntent = googleSignInClient.signInIntent
+                        launcher.launch(signInIntent)
+                    }
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,13 +240,42 @@ fun LoginPage(navController: NavController) {
 
 
             Button(
-                onClick = { },
+                onClick = {
+                        if (!isLoading) {
+                            coroutineScope.launch {
+                                isLoading = true
+                                try {
+                                    val request = LoginRequest(email = email, password = password)
+                                    val response = authApi.login(request)
+                                    if (response.isSuccessful) {
+                                        val auth = response.body()!!
+                                        authPrefs.saveAuthResponse(auth)
+                                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                        navController.navigate(Screen.BottomScreen.Home.bRoute)
+                                    } else {
+                                        Toast.makeText(context, "Login failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                    }
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                }
+                                isLoading = false
+                            }
+                        }
+                    },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E3C8D))
             ) {
-                Text("LOGIN", color = Color.White)
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("LOGIN", color = Color.White)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
