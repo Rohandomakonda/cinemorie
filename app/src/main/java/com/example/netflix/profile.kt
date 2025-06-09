@@ -1,5 +1,6 @@
 package com.example.netflix
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +27,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,30 +40,46 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.dtos.Profile
+import com.example.netflix.retrofit.authApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-
-data class ProfileItem(
-    var name: String,
-    var imageResId: Int,
-    var isEditing: MutableState<Boolean>
+val initialImages = listOf(
+    R.drawable.black_panther,
+    R.drawable.hulk,
+    R.drawable.red_hulk,
+    R.drawable.billy,
+    R.drawable.iron_man
 )
+
 
 @Composable
 fun profile(navController: NavController) {
-    val profileList = remember {
-        mutableStateOf(
-            listOf(
-                ProfileItem(name = "Alice", imageResId = R.drawable.iron_man, isEditing = mutableStateOf(false)),
-                ProfileItem(name = "Bob", imageResId = R.drawable.black_panther, isEditing = mutableStateOf(false)),
-                ProfileItem(name = "Charlie", imageResId = R.drawable.red_hulk, isEditing = mutableStateOf(false)),
-                ProfileItem(name = "Diana", imageResId = R.drawable.billy, isEditing = mutableStateOf(false)),
-                ProfileItem(name = "Ethan", imageResId = R.drawable.hulk, isEditing = mutableStateOf(false))
-            )
-        )
+
+    val profileList = remember { mutableStateOf<List<Profile>>(emptyList()) }
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val userId by authPreferences.userId.collectAsState(initial = 0L)
+    LaunchedEffect(userId) {
+        try {
+            val response = authApi.getprofiles(userId)
+            if (response.isSuccessful) {
+                profileList.value = response.body() ?: emptyList()
+            } else {
+                Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -152,7 +173,7 @@ fun profile(navController: NavController) {
 
 
 @Composable
-fun CircleImage3DEffect(item: ProfileItem,navController: NavController) {
+fun CircleImage3DEffect(item: Profile,navController: NavController,authPreferences: AuthPreferences = AuthPreferences(LocalContext.current)) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(8.dp)
@@ -170,7 +191,7 @@ fun CircleImage3DEffect(item: ProfileItem,navController: NavController) {
 
             ) {
                 Image(
-                    painter = painterResource(id = item.imageResId),
+                    painter = painterResource(id = initialImages[item.avatar.toInt()]),
                     contentDescription = item.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -178,12 +199,18 @@ fun CircleImage3DEffect(item: ProfileItem,navController: NavController) {
                         .clip(CircleShape)
                         .border(2.dp, Color.LightGray, CircleShape)
                         .clickable {
-                            navController.navigate(Screen.BottomScreen.Home.bRoute)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                authPreferences.saveProfile(item)
+                                withContext(Dispatchers.Main) {
+                                    navController.navigate(Screen.BottomScreen.Home.bRoute)
+                                }
+                            }
+
                         }
                 )
             }
 
-            if (!item.isEditing.value) {
+
                 Box(
                     modifier = Modifier
                         .size(32.dp)
@@ -200,14 +227,20 @@ fun CircleImage3DEffect(item: ProfileItem,navController: NavController) {
                         contentDescription = "Edit",
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)
-                        .clickable {
-                            navController.navigate(Screen.OtherPage.EditProfile.bRoute)
+                            .clickable {
+                                // Since saveProfile is a suspend function, you need to call it from a coroutine scope
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    authPreferences.saveProfile(item)
+                                    withContext(Dispatchers.Main) {
+                                        navController.navigate(Screen.OtherPage.EditProfile.bRoute)
+                                    }
+                                }
+                            }
 
-                        }
 
                     )
                 }
-            }
+
         }
 
         Spacer(modifier = Modifier.height(6.dp))

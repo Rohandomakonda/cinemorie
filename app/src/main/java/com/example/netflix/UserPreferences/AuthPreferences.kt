@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.netflix.dtos.AuthResponse
+import com.example.netflix.dtos.Profile
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -16,6 +18,7 @@ object AuthKeys {
     val USER_ID = longPreferencesKey("user_id")
     val EMAIL = stringPreferencesKey("email")
     val NAME = stringPreferencesKey("name")
+    val PROFILE_JSON = stringPreferencesKey("profile_json")
 }
 
 class AuthPreferences(private val context: Context) {
@@ -29,6 +32,16 @@ class AuthPreferences(private val context: Context) {
             prefs[AuthKeys.NAME] = auth.name
         }
     }
+    val userId: Flow<Long> = context.dataStore.data.map { prefs ->
+        prefs[AuthKeys.USER_ID] ?: 0L
+    }
+    suspend fun saveProfile(profile: Profile) {
+        val json = Gson().toJson(profile)
+        context.dataStore.edit { prefs ->
+            prefs[AuthKeys.PROFILE_JSON] = json
+        }
+    }
+
 
     val authData: Flow<AuthResponse> = context.dataStore.data.map { prefs ->
         AuthResponse(
@@ -36,7 +49,13 @@ class AuthPreferences(private val context: Context) {
             refreshToken = prefs[AuthKeys.REFRESH_TOKEN] ?: "",
             id = prefs[AuthKeys.USER_ID] ?: 0L,
             email = prefs[AuthKeys.EMAIL] ?: "",
-            name = prefs[AuthKeys.NAME] ?: ""
+            name = prefs[AuthKeys.NAME] ?: "",
+
         )
     }
+    val profileData: Flow<Profile?> = context.dataStore.data.map { prefs ->
+        prefs[AuthKeys.PROFILE_JSON]?.let { Gson().fromJson(it, Profile::class.java) }
+    }
+
+
 }

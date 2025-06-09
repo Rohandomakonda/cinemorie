@@ -92,7 +92,7 @@ fun LoginPage(navController: NavController) {
                             AuthPreferences(context).saveAuthResponse(auth)
                             Log.d("registering1", " account $auth")
                             Toast.makeText(context, "Google Login Success", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Screen.BottomScreen.Home.bRoute)
+                            navController.navigate(Screen.OtherPage.Profile.bRoute)
                         } else {
                             Toast.makeText(context, "Login failed: ${response.code()}", Toast.LENGTH_SHORT).show()
                         }
@@ -251,7 +251,7 @@ fun LoginPage(navController: NavController) {
                                         val auth = response.body()!!
                                         authPrefs.saveAuthResponse(auth)
                                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                                        navController.navigate(Screen.BottomScreen.Home.bRoute)
+                                        navController.navigate(Screen.OtherPage.Profile.bRoute)
                                     } else {
                                         Toast.makeText(context, "Login failed: ${response.code()}", Toast.LENGTH_SHORT).show()
                                     }

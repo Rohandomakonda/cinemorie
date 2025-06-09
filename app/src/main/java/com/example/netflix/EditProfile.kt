@@ -1,5 +1,6 @@
 package com.example.netflix
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,17 +26,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +48,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.dtos.ProfileRequest
+import com.example.netflix.retrofit.authApi
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -62,9 +70,15 @@ fun EditProfile(navController: NavController) {
             R.drawable.iron_man
         )
     }
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val profile by authPreferences.profileData.collectAsState(initial = null)
+    val profileId = profile?.id ?: 0L
+    val userId by authPreferences.userId.collectAsState(initial = 0L)
     val selectedIndex = remember { mutableStateOf(0) }
     var profileName by remember { mutableStateOf("") }
     val showSlider = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -96,7 +110,29 @@ fun EditProfile(navController: NavController) {
                 Text(
                     text = "Done",
                     modifier = Modifier.clickable {
+                        coroutineScope.launch {
+                            try {
+                                val request = ProfileRequest(
+                                    userid = userId,
+                                    name = profileName,
+                                    selectedImage = selectedIndex.value.toLong()
+                                )
 
+                                val response = authApi.editprofile(profileId, request)
+
+                                if (response.isSuccessful) {
+                                    val profile = response.body()!!
+                                    //authPreferences.saveProfile(profile) // Save the full profile
+                                    Toast.makeText(context, "Profile edited", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(Screen.OtherPage.Profile.bRoute)
+                                } else {
+                                    Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+
+                        }
                     },
                     color = Color.White,
                     fontSize = 20.sp

@@ -55,6 +55,7 @@ dependencies {
     implementation( "androidx.compose.material:material-icons-extended:1.4.3")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
 // ViewModel + LiveData (for MVM / Jetpack Compose)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")

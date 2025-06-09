@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +27,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.netflix.UserPreferences.AuthPreferences
 
 fun darken(color: Color, factor: Float): Color {
     return Color(
@@ -40,6 +44,7 @@ fun darken(color: Color, factor: Float): Color {
         alpha = color.alpha
     )
 }
+
 
 @Composable
 fun appbar(navController: NavController) {
@@ -58,8 +63,11 @@ fun appbar(navController: NavController) {
     )
 
     val darkVioletColors = violetColors.map { darken(it, 0.3f) }
-
-
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val profile by authPreferences.profileData.collectAsState(initial = null)
+    val profilename= profile?.name
+    val avatar=profile?.avatar
 
     Row(
         modifier = Modifier
@@ -90,17 +98,19 @@ fun appbar(navController: NavController) {
             }
             Column() {
                 IconButton(onClick = {navController.navigate(Screen.OtherPage.Profile.bRoute)}) {
-                    Image(
-                        painter = painterResource(id = R.drawable.red_hulk), // Replace with your image URL
-                        contentDescription = "Profile Picture",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(40.dp) // Avatar size
-                            .clip(CircleShape)
-                    )
+                    if (avatar != null) {
+                        Image(
+                            painter = painterResource(id = initialImages[avatar.toInt()]), // Replace with your image URL
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(40.dp) // Avatar size
+                                .clip(CircleShape)
+                        )
+                    }
 
                 }
-                Text("User_name",
+                Text("$profilename",
                     color = Color.White,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold, // Makes the text bold
