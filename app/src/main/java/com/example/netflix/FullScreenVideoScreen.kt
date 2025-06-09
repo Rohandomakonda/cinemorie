@@ -213,15 +213,19 @@ fun FullScreenVideoScreen(navController: NavHostController) {
                                 }
                             }
                         }
+                        Column {
+                            CastButtonComposable()
 
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_fullscreen_exit_24),
-                                contentDescription = "Back",
-                                tint = Color.White,
-                                modifier = Modifier.size(32.dp) // Reduced back button size
-                            )
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_fullscreen_exit_24),
+                                    contentDescription = "Back",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(32.dp) // Reduced back button size
+                                )
+                            }
                         }
+
                     }
 
                 }

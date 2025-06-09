@@ -1,6 +1,7 @@
 package com.example.netflix
 
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,18 +22,19 @@ import com.example.netflix.ui.theme.NetflixTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        com.google.android.gms.cast.framework.CastContext.getSharedInstance(this)  // Init
+
         setContent {
             NetflixTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    val controller: NavController = rememberNavController()
-
-                        Main(controller)
+                    val controller = rememberNavController()
+                    Main(controller)
                 }
             }
         }
     }
 }
+
 
 
 

@@ -50,12 +50,21 @@ dependencies {
 // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 //videoplayer
-    implementation ("com.google.android.exoplayer:exoplayer:2.18.1")  // Or the latest version
+    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")  // Or the latest version
 
     implementation( "androidx.compose.material:material-icons-extended:1.4.3")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation ("androidx.mediarouter:mediarouter:1.6.0")
+
+        implementation ("com.google.android.gms:play-services-cast-framework:21.3.0")
+
+
+
+
+    implementation ("com.google.android.exoplayer:extension-cast:2.19.1")
+
 
 // ViewModel + LiveData (for MVM / Jetpack Compose)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
