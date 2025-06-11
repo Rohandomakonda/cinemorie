@@ -74,7 +74,8 @@ fun EditProfile(navController: NavController) {
     val authPreferences = AuthPreferences(context)
     val profile by authPreferences.profileData.collectAsState(initial = null)
     val profileId = profile?.id ?: 0L
-    val userId by authPreferences.userId.collectAsState(initial = 0L)
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    val userId= auth?.id?:0
     val selectedIndex = remember { mutableStateOf(0) }
     var profileName by remember { mutableStateOf("") }
     val showSlider = remember { mutableStateOf(false) }

@@ -89,8 +89,8 @@ fun LoginPage(navController: NavController) {
                         val response = authApi.authenticateWithGoogle(mapOf("token" to idToken))
                         if (response.isSuccessful) {
                             val auth = response.body()!!
-                            AuthPreferences(context).saveAuthResponse(auth)
-                            Log.d("registering1", " account $auth")
+                            AuthPreferences(context).saveAuthResponse(response.body()!!)
+                            Log.d("registering1", " account ${response.body()!!}")
                             Toast.makeText(context, "Google Login Success", Toast.LENGTH_SHORT).show()
                             navController.navigate(Screen.OtherPage.Profile.bRoute)
                         } else {
@@ -181,7 +181,9 @@ fun LoginPage(navController: NavController) {
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent
                 ),
-                modifier = Modifier.fillMaxWidth().background(Color.Transparent)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
             )
             Spacer(modifier = Modifier.padding(8.dp))
             OutlinedTextField(

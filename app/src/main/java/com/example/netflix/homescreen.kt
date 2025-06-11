@@ -29,6 +29,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,12 +37,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.UserPreferences.AuthPreferences
 
 
 @Composable
@@ -62,59 +65,37 @@ fun HomeScreen(navController: NavController) {
     )
     val showViewModel: ShowViewModel = viewModel()
     val shows by showViewModel.shows
-//    val isLoading by showViewModel.isLoading
-      val movieViewModel: MovieViewModel = viewModel()
-      val movies by movieViewModel.movies
-      val isLoading by movieViewModel.isLoading
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(gradient(true, darkVioletColors))
-            .padding(bottom = 16.dp) // give some space at the end
-    ) {
-        item {
-            card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"),navController)
-        }
-
-        item {
-            Text(
-                text = "Genre",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
-        item {
-            LazyHorizontalGrid(
-                rows = GridCells.Fixed(1),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(genres) {
-                    Card1(it,navController)
-                }
+   // val isLoading by showViewModel.isLoading
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    auth?.let { authResponse ->
+        val movieViewModel: MovieViewModel = viewModel(
+            factory = MovieViewModelFactory(authResponse.accessToken)
+        )
+        val movies by movieViewModel.movies
+        val isLoading by movieViewModel.isLoading
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradient(true, darkVioletColors))
+                .padding(bottom = 16.dp) // give some space at the end
+        ) {
+            item {
+                card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"),navController)
             }
-        }
 
-        item {
-            Text(
-                text = "Top 10 in Cinémoire",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        item {
-            if (isLoading) {
-                Log.d("UI", "Loading is true")
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
-            } else {
-                Log.d("UI", "Loading is false, showing ${shows.size} movies")
+            item {
+                Text(
+                    text = "Genre",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            item {
                 LazyHorizontalGrid(
                     rows = GridCells.Fixed(1),
                     modifier = Modifier
@@ -122,13 +103,45 @@ fun HomeScreen(navController: NavController) {
                         .height(180.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(movies) { Movie ->
-                        MovieCard(Movie,navController)
+                    items(genres) {
+                        Card1(it,navController)
+                    }
+                }
+            }
+
+            item {
+                Text(
+                    text = "Top 10 in Cinémoire",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            item {
+                if (isLoading) {
+                    Log.d("UI", "Loading is true")
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
+                } else {
+                    Log.d("UI", "Loading is false, showing ${shows.size} movies")
+                    LazyHorizontalGrid(
+                        rows = GridCells.Fixed(1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(movies) { Movie ->
+                            MovieCard(Movie,navController)
+                        }
                     }
                 }
             }
         }
+
+
     }
+
 }
 
 

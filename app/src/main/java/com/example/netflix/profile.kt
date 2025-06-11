@@ -68,14 +68,21 @@ fun profile(navController: NavController) {
     val profileList = remember { mutableStateOf<List<Profile>>(emptyList()) }
     val context = LocalContext.current
     val authPreferences = AuthPreferences(context)
-    val userId by authPreferences.userId.collectAsState(initial = 0L)
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    val userId= auth?.id
     LaunchedEffect(userId) {
         try {
-            val response = authApi.getprofiles(userId)
-            if (response.isSuccessful) {
-                profileList.value = response.body() ?: emptyList()
-            } else {
-                Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+            val response = userId?.let { authApi.getprofiles(it) }
+            if (response != null) {
+                if (response.isSuccessful) {
+                    if (response != null) {
+                        profileList.value = response.body() ?: emptyList()
+                    }
+                } else {
+                    if (response != null) {
+                        Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         } catch (e: Exception) {
             Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()

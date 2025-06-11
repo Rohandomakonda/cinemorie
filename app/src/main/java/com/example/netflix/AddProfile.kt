@@ -79,7 +79,8 @@ fun AddProfile(navController: NavController) {
     val context = LocalContext.current
     val authPreferences = AuthPreferences(context)
 
-    val userId by authPreferences.userId.collectAsState(initial = 0L)
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    val userId= auth?.id
     val selectedIndex = remember { mutableStateOf(0) }
     var profileName by remember { mutableStateOf("") }
     val showSlider = remember { mutableStateOf(false) }
@@ -120,21 +121,25 @@ fun AddProfile(navController: NavController) {
                     modifier = Modifier.clickable {
                         coroutineScope.launch {
                             try {
-                                val request = ProfileRequest(
-                                    userid = userId,
-                                    name = profileName,
-                                    selectedImage = selectedIndex.value.toLong()
-                                )
+                                val request = userId?.let {
+                                    ProfileRequest(
+                                        userid = it,
+                                        name = profileName,
+                                        selectedImage = selectedIndex.value.toLong()
+                                    )
+                                }
 
-                                val response = authApi.addprofile(request)
+                                val response = request?.let { authApi.addprofile(it) }
 
-                                if (response.isSuccessful) {
-                                    val profile = response.body()!!
-                                    //authPreferences.saveProfile(profile) // Save the full profile
-                                    Toast.makeText(context, "Profile added", Toast.LENGTH_SHORT).show()
-                                    navController.navigate(Screen.OtherPage.Profile.bRoute)
-                                } else {
-                                    Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                if (response != null) {
+                                    if (response.isSuccessful) {
+                                        val profile = response.body()!!
+                                        //authPreferences.saveProfile(profile) // Save the full profile
+                                        Toast.makeText(context, "Profile added", Toast.LENGTH_SHORT).show()
+                                        navController.navigate(Screen.OtherPage.Profile.bRoute)
+                                    } else {
+                                        Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             } catch (e: Exception) {
                                 Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
