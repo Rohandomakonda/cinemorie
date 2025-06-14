@@ -56,15 +56,18 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation ("androidx.mediarouter:mediarouter:1.6.0")
 
+        implementation ("androidx.mediarouter:mediarouter:1.6.0")
         implementation ("com.google.android.gms:play-services-cast-framework:21.3.0")
+
 
 
 
 
     implementation ("com.google.android.exoplayer:extension-cast:2.19.1")
 
+//
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
 
 // ViewModel + LiveData (for MVM / Jetpack Compose)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
@@ -74,6 +77,7 @@ dependencies {
 
 // Optional: OkHttp logging (for network debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation ("com.google.android.material:material:1.9.0")
 
     implementation("androidx.compose.material3:material3:1.1.0")
     implementation("org.apache.commons:commons-text:1.10.0")

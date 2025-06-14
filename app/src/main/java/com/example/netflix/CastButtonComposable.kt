@@ -1,27 +1,47 @@
 package com.example.netflix
+import android.app.Activity
 import android.util.Log
-import android.view.ContextThemeWrapper
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cast
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.mediarouter.app.MediaRouteButton
-import com.google.android.gms.cast.framework.CastButtonFactory
+import androidx.mediarouter.app.MediaRouteChooserDialog
+import androidx.mediarouter.media.MediaRouteSelector
+import com.google.android.gms.cast.CastMediaControlIntent
 
 @Composable
-fun CastButtonComposable() {
+fun CustomCastButton() {
     val context = LocalContext.current
-    val themedContext = ContextThemeWrapper(context, R.style.Theme_Netflix)
-Log.d("CastButtonComposable", "CastButtonComposable called")
-    AndroidView(factory = {
-        MediaRouteButton(themedContext)
-    }, modifier = Modifier.size(40.dp))
-}
 
+    // Create a Cast device selector for default Cast receivers
+    val selector = MediaRouteSelector.Builder()
+        .addControlCategory(CastMediaControlIntent.categoryForCast("CC1AD845"))
+        .build()
+
+
+    IconButton(onClick = {
+        Log.d("CustomCastButton", "Clicked - showing Cast dialog")
+
+        val activity = context as? Activity
+        if (activity == null) {
+            Log.e("CustomCastButton", "Context is not an Activity, can't show Cast dialog")
+            return@IconButton
+        }
+
+        // Create and show the Cast device chooser dialog manually
+        val dialog = MediaRouteChooserDialog(activity)
+        dialog.routeSelector = selector
+        dialog.show()
+
+    }) {
+        Icon(
+            imageVector = Icons.Default.Cast,
+            contentDescription = "Cast Button",
+            tint = Color.White
+        )
+    }
+}

@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import java.io.File
 import java.io.FileOutputStream
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
@@ -41,12 +42,19 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import com.google.android.gms.cast.framework.CastContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FullScreenVideoScreen(navController: NavHostController) {
-    val context = LocalContext.current
+    Log.d("FullScreenVideoScreen", "Entered FullScreenVideoScreen")
     val showControls = remember { mutableStateOf(true) }
+    val context = LocalContext.current
+
+//    val castContext = remember {
+//        CastContext.getSharedInstance(context)
+//    }
+//    Log.d("FullScreenVideoScreen", "Cast Context: $castContext")
 
     val movie = remember {
         navController.previousBackStackEntry?.savedStateHandle?.get<Movie>("movie")
@@ -58,6 +66,8 @@ fun FullScreenVideoScreen(navController: NavHostController) {
     }
 
     val decodedVideoData = Base64.decode(movie.videoData, Base64.DEFAULT)
+//    val outputFile = File(context.cacheDir, "video.mp4")
+//    outputFile.writeBytes(decodedVideoData)
 
     val videoFile = remember {
         val tempFile = File.createTempFile("temp_video", ".mp4", context.cacheDir)
@@ -214,7 +224,14 @@ fun FullScreenVideoScreen(navController: NavHostController) {
                             }
                         }
                         Column {
-                            CastButtonComposable()
+                            CustomCastButton()
+
+
+                            Button(onClick = {
+                                prepareAndCastVideo(context, movie.videoData)  // Pass your Base64 video string here
+                            }) {
+                                Text("Cast Base64 Video")
+                            }
 
                             IconButton(onClick = { navController.popBackStack() }) {
                                 Icon(

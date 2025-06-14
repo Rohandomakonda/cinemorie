@@ -3,6 +3,7 @@ package com.example.netflix
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,11 +19,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.netflix.ui.theme.NetflixTheme
+import com.google.android.gms.cast.framework.CastContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        com.google.android.gms.cast.framework.CastContext.getSharedInstance(this)  // Init
+        Log.d("MainActivity", "onCreate called")
+        CastContext.getSharedInstance(this)  // `this` = Activity context
 
         setContent {
             NetflixTheme {
@@ -33,7 +36,9 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
+
 
 
 

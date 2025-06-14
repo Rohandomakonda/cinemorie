@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
@@ -19,20 +20,20 @@
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.example.netflix.MyCastOptionsProvider" />
+            android:value="com.example.netflix.CastOptionsProvider" />
 
-        <service
-            android:name="com.google.android.gms.cast.framework.media.MediaNotificationService"
-            android:exported="false" />
+        <!--        <service-->
+<!--            android:name="com.google.android.gms.cast.framework.media.MediaNotificationService"-->
+<!--            android:exported="false" />-->
 
-        <receiver
-            android:name="com.google.android.gms.cast.framework.media.MediaIntentReceiver"
-            android:exported="true"
-            tools:replace="android:exported">
-            <intent-filter>
-                <action android:name="com.google.android.gms.cast.framework.action.UPDATE_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
+<!--        <receiver-->
+<!--            android:name="com.google.android.gms.cast.framework.media.MediaIntentReceiver"-->
+<!--            android:exported="true"-->
+<!--            tools:replace="android:exported">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.android.gms.cast.framework.action.UPDATE_NOTIFICATION" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
         <activity
             android:name=".MainActivity"
