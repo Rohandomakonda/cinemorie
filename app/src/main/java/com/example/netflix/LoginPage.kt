@@ -87,6 +87,7 @@ fun LoginPage(navController: NavController) {
                 coroutineScope.launch {
                     try {
                         val response = authApi.authenticateWithGoogle(mapOf("token" to idToken))
+                        Log.d("registering1", " account $response")
                         if (response.isSuccessful) {
                             val auth = response.body()!!
                             AuthPreferences(context).saveAuthResponse(response.body()!!)

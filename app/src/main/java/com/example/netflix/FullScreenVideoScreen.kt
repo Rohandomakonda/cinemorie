@@ -224,14 +224,11 @@ fun FullScreenVideoScreen(navController: NavHostController) {
                             }
                         }
                         Column {
-                            CustomCastButton()
+                            CustomCastButton(movie.videoData)
 
 
-                            Button(onClick = {
-                                prepareAndCastVideo(context, movie.videoData)  // Pass your Base64 video string here
-                            }) {
-                                Text("Cast Base64 Video")
-                            }
+
+
 
                             IconButton(onClick = { navController.popBackStack() }) {
                                 Icon(

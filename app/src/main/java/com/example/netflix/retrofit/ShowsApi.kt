@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 val showsretrofit = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:8765/")
+    .baseUrl("http://192.168.68.106:8765/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
