@@ -51,7 +51,7 @@ fun WatchPartyScreen(
 ) {
     val context = LocalContext.current
     val viewModel: WatchPartyViewModel = viewModel(
-        factory = WatchPartyViewModel.Factory(partyCode)
+        factory = WatchPartyViewModel.Factory(partyCode = partyCode, context = context)
     )
 
     val party = viewModel.party
