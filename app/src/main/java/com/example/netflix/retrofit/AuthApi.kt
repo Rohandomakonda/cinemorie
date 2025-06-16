@@ -22,6 +22,7 @@ val registerretrofit = Retrofit.Builder()
 
 val authApi = registerretrofit.create(AuthApi::class.java)
 
+
 interface AuthApi{
     @POST("api/auth/register")  // or "/api/register" if your controller has @RequestMapping("/api")
      suspend fun register(@Body request: RegisterRequest): Response<Void>
