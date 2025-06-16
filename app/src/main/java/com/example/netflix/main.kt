@@ -23,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 
 @Composable
 fun Main(controller: NavController) {
@@ -185,6 +187,16 @@ fun Navigation(navController: NavController) {
 
             ShowFullScreenVideo(navController)
 
+        }
+        composable(
+            route = Screen.OtherPage.WatchParty.bRoute,
+            arguments = listOf(navArgument("partyCode") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val partyCode = backStackEntry.arguments?.getString("partyCode") ?: ""
+            WatchPartyScreen(
+                navController = navController,
+                partyCode = partyCode
+            )
         }
 
 

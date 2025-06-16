@@ -17,6 +17,7 @@ data class showDetails(
     val genres: List<String>
 )
 
+@Parcelize
 data class movieDetails(
     val title: String,
     val description: String?="",
@@ -27,7 +28,7 @@ data class movieDetails(
     val backgroundImage: String,
     val morelikethis: List<Pair<String,String>>? =null,
     val genres: List<String>?=null
-)
+): Parcelable
 
 @Parcelize
 data class Movie(
@@ -74,6 +75,8 @@ data class Episode(
     val fileUrl: String,
     val thumbnailUrl: String
 ) : Parcelable
+
+
 
 
 

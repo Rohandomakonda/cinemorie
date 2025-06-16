@@ -63,6 +63,9 @@ sealed class Screen(val title: String, val route: String) {
         object ShowFullScreenVideo: OtherPage(
             "ShowFullScreenVideo","showFullScreenVideo"
         )
+        object WatchParty: OtherPage(
+            "WatchParty","watchParty/{partyCode}"
+        )
 
     }
 
