@@ -29,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,12 +40,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
+import java.io.File
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
 fun WatchPartyScreen(
     navController: NavController,
@@ -53,25 +61,37 @@ fun WatchPartyScreen(
     val viewModel: WatchPartyViewModel = viewModel(
         factory = WatchPartyViewModel.Factory(partyCode = partyCode, context = context)
     )
+    val videoUrl = navController.previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<String>("Video")
+
+    if (videoUrl == null) {
+        Text("Video URL missing", color = Color.Red)
+        return
+    }
+    val decodedBytes = Base64.decode(videoUrl)
+    val tempFile = File.createTempFile("video", ".mp4", context.cacheDir)
+    tempFile.writeBytes(decodedBytes)
+    val uri = tempFile.toUri()
+
 
     val party = viewModel.party
     val isHost = viewModel.isHost
     val isConnected = viewModel.isConnected
     val participants = viewModel.participants
-    val currentTime = viewModel.currentTime
-    val isPlaying = viewModel.isPlaying
 
-    // ExoPlayer setup
+    val isPlayingState = remember { mutableStateOf(false) }
+    val isPlaying by isPlayingState
+
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            // Add your video URL here - you'll need to get this from your movie data
-            val mediaItem = MediaItem.fromUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
+            val mediaItem = MediaItem.fromUri(uri)
             setMediaItem(mediaItem)
             prepare()
         }
     }
 
-    // Listen to WebSocket events
+    // WebSocket events
     LaunchedEffect(Unit) {
         viewModel.connectToParty()
         viewModel.watchEvents.collect { event ->
@@ -91,8 +111,17 @@ fun WatchPartyScreen(
         }
     }
 
+    // Player Listener
     DisposableEffect(Unit) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(isPlayingNow: Boolean) {
+                isPlayingState.value = isPlayingNow
+            }
+        }
+        exoPlayer.addListener(listener)
+
         onDispose {
+            exoPlayer.removeListener(listener)
             exoPlayer.release()
             viewModel.disconnect()
         }
@@ -103,7 +132,7 @@ fun WatchPartyScreen(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Party Info Header
+        // Header
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Color(20, 20, 20),
@@ -147,7 +176,7 @@ fun WatchPartyScreen(
             }
         }
 
-        // Video Player
+        // Player View
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -157,14 +186,14 @@ fun WatchPartyScreen(
                 factory = { context ->
                     PlayerView(context).apply {
                         player = exoPlayer
-                        useController = false // We'll create custom controls
+                        useController = false
                     }
                 },
                 modifier = Modifier.fillMaxSize()
             )
         }
 
-        // Custom Controls (only for host)
+        // Controls
         if (isHost) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -228,7 +257,6 @@ fun WatchPartyScreen(
                 }
             }
         } else {
-            // Non-host message
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color(30, 30, 30),
@@ -243,7 +271,7 @@ fun WatchPartyScreen(
             }
         }
 
-        // Participants List
+        // Participants
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Color(25, 25, 25),

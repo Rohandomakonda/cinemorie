@@ -1,5 +1,6 @@
 package com.example.netflix
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -271,12 +272,12 @@ fun MovieDetailScreen(
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Button(
                                     onClick = {
-                                        // Navigate to watch party screen
-                                        val route = Screen.OtherPage.WatchParty.bRoute.replace(
-                                            "{partyCode}",
-                                            createdPartyCode
-                                        )
-                                        navController.navigate(route)
+                                        data?.let {
+    navController.currentBackStackEntry?.savedStateHandle?.set("Video", it.videoData)
+}
+Log.d("Stomp", data?.videoData?:"null")
+val route = Screen.OtherPage.WatchParty.bRoute.replace("{partyCode}", createdPartyCode)
+navController.navigate(route)
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Green)

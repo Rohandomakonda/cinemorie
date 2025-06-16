@@ -50,7 +50,16 @@ class WatchPartyViewModel(
     init {
         loadParty()
         observeConnectionStatus()
+        observeParticipants()
     }
+    private fun observeParticipants() {
+        viewModelScope.launch {
+            webSocketClient.participantUpdates.collect { updatedList ->
+                participants = updatedList
+            }
+        }
+    }
+
 
     private fun loadParty() {
         viewModelScope.launch {
@@ -76,7 +85,7 @@ class WatchPartyViewModel(
 
 
     fun connectToParty() {
-        webSocketClient.connect()
+        webSocketClient.connect(partyCode)
     }
 
     fun sendWatchEvent(action: String, timestamp: Double) {
@@ -104,6 +113,9 @@ class WatchPartyViewModel(
                     party = result
                     participants = result.participantIds
                     errorMessage = ""
+
+                    // After joining, request real-time update
+                    webSocketClient.sendParticipantRequest(partyCode)
                 } else {
                     errorMessage = "Failed to join party"
                 }
@@ -112,6 +124,7 @@ class WatchPartyViewModel(
             }
         }
     }
+
 
     private fun observeConnectionStatus() {
         viewModelScope.launch {
