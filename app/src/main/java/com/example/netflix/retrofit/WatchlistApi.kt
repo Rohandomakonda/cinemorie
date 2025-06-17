@@ -42,7 +42,8 @@ interface WatchlistApi {
     @DELETE("api/watchlist/movie/{id}")
     suspend fun deletemoviewatchlist(
         @Header("Authorization") token: String,
-        @Path("id") id: Long
+        @Field("userid") userid: Long,
+        @Field("movieid") movieid: Long
     ): Response<Long>
 
     @GET("api/watchlist/series/{profileId}")
@@ -57,13 +58,14 @@ interface WatchlistApi {
         @Header("Authorization") token: String,
         @Field("id") id: Long?,             // nullable
         @Field("userid") userid: Long,
-        @Field("movieid") movieid: Long
+        @Field("series") seriesid: Long
     ): Response<SeriesWatchList>
 
     @DELETE("api/watchlist/series/{id}")
     suspend fun deleteserieswatchlist(
         @Header("Authorization") token: String,
-        @Path("id") id: Long
+        @Field("userid") userid: Long,
+        @Field("seriesid") movieid: Long
     ): Response<Long>
 
 

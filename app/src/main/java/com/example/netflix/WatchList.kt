@@ -128,7 +128,7 @@ fun WatchList(navController: NavController) {
 
     var movies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     val removeFromWatchlist: (Long) -> Unit = { id ->
-        movies = movies.filter { it.id != id }
+        movies = movies.filter { it.id.toLong() != id }
     }
     var series by remember { mutableStateOf<List<Series>>(emptyList()) }
     val removeFromSerieslist: (Long) -> Unit = { id ->
@@ -161,29 +161,29 @@ fun WatchList(navController: NavController) {
             Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
-//    LaunchedEffect(profileId, at) {
-//        try {
-//            isLoading.value = true
-//            if (at != null && profileId != null) {
-//                val response = watchlistApi.getseries(
-//                    token = at,
-//                    profileId = profileId
-//                )
-//
-//                if (response.isSuccessful) {
-//                    series = response.body() ?: emptyList()
-//                    isLoading.value = false
-//                    Toast.makeText(context, "Successfully fetched watchlist for series", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
-//                }
-//            } else {
-//                Toast.makeText(context, "Missing token or profile ID", Toast.LENGTH_SHORT).show()
-//            }
-//        } catch (e: Exception) {
-//            Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-//        }
-//    }
+    LaunchedEffect(profileId, at) {
+        try {
+            isLoading.value = true
+            if (at != null && profileId != null) {
+                val response = watchlistApi.getseries(
+                    token = at,
+                    profileId = profileId
+                )
+
+                if (response.isSuccessful) {
+                    series = response.body() ?: emptyList()
+                    isLoading.value = false
+                    Toast.makeText(context, "Successfully fetched watchlist for series", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Missing token or profile ID", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
 
@@ -212,16 +212,16 @@ fun WatchList(navController: NavController) {
                 }
             }
         }
-//        item{
-//            Text("Series")
-//        }
-//        items(series) { serie ->
-//            if (at != null) {
-//                if (profileId != null) {
-//                    watchlistcardseries(serie,navController,at,profileId,context,removeFromSerieslist)
-//                }
-//            }
-//        }
+        item{
+            Text("Series")
+        }
+        items(series) { serie ->
+            if (at != null) {
+                if (profileId != null) {
+                    watchlistcardseries(serie,navController,at,profileId,context,removeFromSerieslist)
+                }
+            }
+        }
     }
 
 
@@ -352,12 +352,13 @@ fun watchlistcard(
                                     val response =
                                         watchlistApi.deletemoviewatchlist(
                                             token = at,
-                                            id = movieItem.id
+                                            userid = profileId,
+                                            movieid = movieItem.id.toLong()
                                         )
                                     if (response != null) {
                                         if (response.isSuccessful) {
 
-                                            removeFromWatchlist(movieItem.id)
+                                            removeFromWatchlist(movieItem.id.toLong())
                                             Toast.makeText(context, "Successfully deleted into watchlist ${movieItem.id}", Toast.LENGTH_SHORT).show()
                                             //navController.navigate(Screen.OtherPage.Profile.bRoute)
                                         } else {
@@ -387,7 +388,7 @@ fun watchlistcard(
 }
 @Composable
 fun watchlistcardseries(
-    movieItem: Series,
+    movieItem1: Series,
     navController: NavController,
     at:String, profileId: Long,
     context: Context,
@@ -408,15 +409,15 @@ fun watchlistcardseries(
             // Movie Thumbnail
             Box(
                 modifier = Modifier.clickable {
-                    Log.d("MovieInfo", "Setting Movie: $movieItem")
+                    Log.d("MovieInfo", "Setting Movie: $movieItem1")
                     // When you click on a movie item, navigate to MovieInfo
-                    navController.currentBackStackEntry?.savedStateHandle?.set("movie", movieItem)
+                    navController.currentBackStackEntry?.savedStateHandle?.set("movie", movieItem1)
                     navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
                 },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(movieItem.thumbnailUrl),
+                    painter = rememberAsyncImagePainter(movieItem1.thumbnailUrl),
                     contentDescription = "image",
                     modifier = Modifier
                         .height(150.dp)
@@ -449,7 +450,7 @@ fun watchlistcardseries(
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = movieItem.title,
+                    text = movieItem1.title,
                     fontSize = 18.sp,
                     color = Color.White
                 )
@@ -457,7 +458,7 @@ fun watchlistcardseries(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${movieItem.releaseDate}",
+                    text = "${movieItem1.releaseDate}",
                     fontSize = 12.sp,
                     color = Color.LightGray
                 )
@@ -509,11 +510,12 @@ fun watchlistcardseries(
                                     val response =
                                         watchlistApi.deletemoviewatchlist(
                                             token = at,
-                                            id = movieItem.seriesId
+                                            userid = profileId,
+                                            movieid = movieItem1.seriesId
                                         )
                                     if (response != null) {
                                         if (response.isSuccessful) {
-                                            removeFromSerieslist(movieItem.seriesId)
+                                            removeFromSerieslist(movieItem1.seriesId)
 
 
                                             Toast.makeText(context, "Successfully deleted into watchlist", Toast.LENGTH_SHORT).show()

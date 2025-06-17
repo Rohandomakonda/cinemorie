@@ -1,5 +1,7 @@
 package com.example.netflix
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -217,7 +219,7 @@ fun MovieDetailScreen(
                                                         token = at,
                                                         id = null,
                                                         userid = profileId,
-                                                        movieid = it.id
+                                                        movieid = it.id.toLong()
                                                     )
                                                 }
 
@@ -433,4 +435,3 @@ navController.navigate(route)
             }
         }
     }
-}
