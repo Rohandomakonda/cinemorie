@@ -1,6 +1,7 @@
 package com.example.netflix
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,25 +22,41 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.retrofit.watchlistApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -61,12 +78,16 @@ fun ShowDetailScreen(
             )
         )
     }
+
+    // State for managing dropdown and selected season
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedSeasonIndex by remember { mutableStateOf(0) }
+
     if (data != null) {
         for(episodes in data?.seasons?.get(0)?.episodes!!){
             Log.d("Episodes", episodes.episodeNumber.toString())
         }
     }
-
 
     if (data != null) {
         Log.d("ShowInfo", "Received show: $data")
@@ -74,7 +95,12 @@ fun ShowDetailScreen(
         Log.d("ShowInfo", "No show received!")
     }
 
-
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val profile by authPreferences.profileData.collectAsState(initial = null)
+    val profileId= profile?.id
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    val at=auth?.accessToken
 
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
@@ -176,9 +202,50 @@ fun ShowDetailScreen(
                             modifier = Modifier.padding(start = 30.dp).width(300.dp)
                         )
 
+                        Button(
+                            onClick = {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    try {
+                                        if (at != null && profileId != null) {
+                                            val response = data?.let {
+                                                watchlistApi.addserieswatchlist(
+                                                    token = at,
+                                                    id = null,
+                                                    userid = profileId,
+                                                    seriesid = it.seriesId.toLong()
+                                                )
+                                            }
+
+                                            if (response != null) {
+                                                if (response.isSuccessful) {
+                                                    Toast.makeText(context, "Successfully added into watchlist", Toast.LENGTH_SHORT).show()
+                                                    //navController.navigate(Screen.OtherPage.Profile.bRoute)
+                                                } else {
+                                                    if (response != null) {
+                                                        Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "Missing token or profile ID", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.White
+                            ),
+                            border = BorderStroke(2.dp, Color.White)
+                        ) {
+                            Text("+ Watchlist")
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Safe seasons handling
+                        // Safe seasons handling with dropdown menu
                         val seasons = data?.seasons
 
                         if (seasons.isNullOrEmpty()) {
@@ -193,104 +260,169 @@ fun ShowDetailScreen(
                         } else {
                             Spacer(modifier = Modifier.height(24.dp))
                             Column(modifier = Modifier.padding(30.dp)) {
-                                Text(
-                                    text = "Episodes",
-                                    fontSize = 18.sp,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                seasons.forEach { season ->
+                                // Episodes section header and dropdown
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Text(
-                                        text = "Season ${season.seasonNumber}",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Color.LightGray,
-                                        modifier = Modifier.padding(vertical = 8.dp)
+                                        text = "Episodes",
+                                        fontSize = 18.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
                                     )
 
-                                    season.episodes.forEach { episode ->
-                                        val painter =
-                                            rememberAsyncImagePainter(episode.thumbnailUrl)
-
-                                        Row(
+                                    // Season dropdown menu
+                                    Box(
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Surface(
                                             modifier = Modifier
-                                                .padding(vertical = 8.dp)
                                                 .fillMaxWidth()
+                                                .clickable { isDropdownExpanded = true },
+                                            shape = RoundedCornerShape(8.dp),
+                                            color = Color.White.copy(alpha = 0.15f)
                                         ) {
-                                            Box(
-                                                modifier = Modifier.clickable {
-                                                    navController.currentBackStackEntry?.savedStateHandle?.set("episode", episode)
-                                                    navController.currentBackStackEntry?.savedStateHandle?.set("series", data)
-                                                    navController.navigate(Screen.OtherPage.ShowFullScreenVideo.bRoute)
-                                                },
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Image(
-                                                    painter = painter,
-                                                    contentDescription = episode.title,
-                                                    modifier = Modifier
-                                                        .height(150.dp)
-                                                        .width(150.dp)
-                                                        .clip(RoundedCornerShape(16.dp))
-                                                        .background(Color.Gray)
-                                                        .border(
-                                                            2.dp,
-                                                            Color.White,
-                                                            RoundedCornerShape(16.dp)
-                                                        ),
-                                                    contentScale = ContentScale.Crop
-                                                )
-
-                                                Box(
-                                                    modifier = Modifier.background(
-                                                        Color.Gray.copy(
-                                                            0.6f
-                                                        ), CircleShape
-                                                    )
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.PlayArrow,
-                                                        contentDescription = null,
-                                                        modifier = Modifier
-                                                            .clip(CircleShape)
-                                                            .border(
-                                                                BorderStroke(2.dp, Color.Black),
-                                                                CircleShape
-                                                            )
-                                                            .size(50.dp),
-                                                        tint = Color.Black
-                                                    )
-                                                }
-                                            }
-
-                                            Spacer(modifier = Modifier.width(30.dp))
-
-                                            Column(
-                                                modifier = Modifier.weight(1f)
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(12.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 Text(
-                                                    text = episode.title,
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.SemiBold,
+                                                    text = if (seasons.isNotEmpty() && selectedSeasonIndex < seasons.size) {
+                                                        "Season ${seasons[selectedSeasonIndex].seasonNumber}"
+                                                    } else {
+                                                        "Select Season"
+                                                    },
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Medium,
                                                     color = Color.White
                                                 )
 
-
-                                                Spacer(modifier = Modifier.height(4.dp))
-                                                Text(
-                                                    text = "Released: ${episode.releaseDate}",
-                                                    fontSize = 13.sp,
-                                                    color = Color.LightGray
+                                                Icon(
+                                                    imageVector = if (isDropdownExpanded)
+                                                        Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                                    contentDescription = "Season dropdown",
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(20.dp)
                                                 )
-
-                                                Text(
-                                                    text = "Duration: ${episode.duration} min",
-                                                    fontSize = 13.sp,
-                                                    color = Color.LightGray
-                                                )
-                                                }
+                                            }
                                         }
+
+                                        // Dropdown menu
+                                        DropdownMenu(
+                                            expanded = isDropdownExpanded,
+                                            onDismissRequest = { isDropdownExpanded = false },
+                                            modifier = Modifier.background(
+                                                Color(40, 40, 40),
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                        ) {
+                                            seasons.forEachIndexed { index, season ->
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            text = "Season ${season.seasonNumber}",
+                                                            color = Color.White,
+                                                            fontSize = 14.sp
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        selectedSeasonIndex = index
+                                                        isDropdownExpanded = false
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                // Display episodes for selected season
+                                if (seasons.isNotEmpty() && selectedSeasonIndex < seasons.size) {
+                                    val selectedSeason = seasons[selectedSeasonIndex]
+
+                                    Column {
+                                        selectedSeason.episodes.forEach { episode ->
+                                            val painter = rememberAsyncImagePainter(episode.thumbnailUrl)
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .padding(vertical = 8.dp)
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier.clickable {
+                                                        navController.currentBackStackEntry?.savedStateHandle?.set("episode", episode)
+                                                        navController.currentBackStackEntry?.savedStateHandle?.set("series", data)
+                                                        navController.navigate(Screen.OtherPage.ShowFullScreenVideo.bRoute)
+                                                    },
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Image(
+                                                        painter = painter,
+                                                        contentDescription = episode.title,
+                                                        modifier = Modifier
+                                                            .height(120.dp)
+                                                            .width(120.dp)
+                                                            .clip(RoundedCornerShape(12.dp))
+                                                            .background(Color.Gray)
+                                                            .border(
+                                                                1.dp,
+                                                                Color.White.copy(alpha = 0.3f),
+                                                                RoundedCornerShape(12.dp)
+                                                            ),
+                                                        contentScale = ContentScale.Crop
+                                                    )
+
+                                                    Box(
+                                                        modifier = Modifier.background(
+                                                            Color.Black.copy(alpha = 0.6f),
+                                                            CircleShape
+                                                        )
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.PlayArrow,
+                                                            contentDescription = "Play episode",
+                                                            modifier = Modifier
+                                                                .size(40.dp)
+                                                                .padding(8.dp),
+                                                            tint = Color.White
+                                                        )
+                                                    }
+                                                }
+
+                                                Spacer(modifier = Modifier.width(16.dp))
+
+                                                Column(
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    Text(
+                                                        text = "Episode ${episode.episodeNumber}: ${episode.title}",
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = Color.White
+                                                    )
+
+                                                    Spacer(modifier = Modifier.height(4.dp))
+
+                                                    Text(
+                                                        text = "Released: ${episode.releaseDate}",
+                                                        fontSize = 12.sp,
+                                                        color = Color.LightGray
+                                                    )
+
+                                                    Text(
+                                                        text = "Duration: ${episode.duration} min",
+                                                        fontSize = 12.sp,
+                                                        color = Color.LightGray
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -301,44 +433,4 @@ fun ShowDetailScreen(
             }
         }
     }
-//                            Spacer(modifier = Modifier.height(8.dp))
-//                        if (!data.morelikethis.isNullOrEmpty()) {
-//                            Column(modifier = Modifier.padding(30.dp, 8.dp)) {
-//                                Text(
-//                                    text = "More Like this: ",
-//                                    fontSize = 15.sp,
-//                                    color = Color.White,
-//                                    modifier = Modifier.padding()
-//                                )
-//                                Spacer(modifier = Modifier.height(16.dp))
-//                                LazyRow() {
-//                                    items(data.morelikethis) {(name,image)->
-//                                        val imagePainter = rememberAsyncImagePainter(image)
-//                                        Column(modifier = Modifier.padding(end=8.dp).width(105.dp)){
-//                                            Image(
-//                                                painter = imagePainter,
-//                                                contentDescription = "${name} picture",
-//                                                modifier = Modifier
-//                                                    .size(100.dp)
-//                                                    .clip(RoundedCornerShape(20))
-//                                                    .background(Color.Gray, RoundedCornerShape(20))
-//                                                    .border(2.dp, Color.White, RoundedCornerShape(20)),
-//                                                contentScale = ContentScale.Crop
-//                                            )
-//                                            Spacer(modifier = Modifier.height(6.dp))
-//                                            Text(
-//                                                text = name,
-//                                                fontSize = 15.sp,
-//                                                color = Color.White
-//                                            )
-//                                        }
-//                                    }
-//                                }
-//                            }
-
-
-
-
-
-
-
+}
