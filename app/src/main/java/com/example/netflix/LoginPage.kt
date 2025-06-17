@@ -91,6 +91,7 @@ fun LoginPage(navController: NavController) {
                         if (response.isSuccessful) {
                             val auth = response.body()!!
                             AuthPreferences(context).saveAuthResponse(response.body()!!)
+                           // setprofile(context);
                             Log.d("registering1", " account ${response.body()!!}")
                             Toast.makeText(context, "Google Login Success", Toast.LENGTH_SHORT).show()
                             navController.navigate(Screen.OtherPage.Profile.bRoute)

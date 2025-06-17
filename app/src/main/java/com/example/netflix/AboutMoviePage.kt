@@ -1,5 +1,6 @@
 package com.example.netflix
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,12 +29,15 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +45,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.dtos.LoginRequest
+import com.example.netflix.retrofit.authApi
+import com.example.netflix.retrofit.watchlistApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun MovieDetailScreen(
@@ -59,6 +71,12 @@ fun MovieDetailScreen(
     val isLoading = viewModel.isLoading
     val errorMessage = viewModel.errorMessage
     val createdPartyCode = viewModel.createdPartyCode
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val profile by authPreferences.profileData.collectAsState(initial = null)
+    val profileId= profile?.id
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    val at=auth?.accessToken
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (data != null) {
@@ -187,7 +205,38 @@ fun MovieDetailScreen(
                             }
 
                             Button(
-                                onClick = { /* Add to watchlist */ },
+                                onClick = {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        try {
+                                            if (at != null && profileId != null) {
+                                                val response = movie?.let {
+                                                    watchlistApi.addMovieToWatchlist(
+                                                        token = at,
+                                                        id = null,
+                                                        userid = profileId,
+                                                        movieid = it.id
+                                                    )
+                                                }
+
+                                                if (response != null) {
+                                                    if (response.isSuccessful) {
+                                                        Toast.makeText(context, "Successfully added into watchlist", Toast.LENGTH_SHORT).show()
+                                                        //navController.navigate(Screen.OtherPage.Profile.bRoute)
+                                                    } else {
+                                                        if (response != null) {
+                                                            Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                Toast.makeText(context, "Missing token or profile ID", Toast.LENGTH_SHORT).show()
+                                            }
+                                        } catch (e: Exception) {
+                                            Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                                ,
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Transparent,

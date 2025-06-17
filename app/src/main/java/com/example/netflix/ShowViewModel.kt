@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.netflix.retrofit.showApi
 import kotlinx.coroutines.launch
 
-class ShowViewModel: ViewModel() {
+class ShowViewModel(private val accessToken: String ): ViewModel() {
     private val _shows = mutableStateOf<List<Series>>(emptyList())
     val shows: State<List<Series>> get() = _shows
 
@@ -25,7 +25,7 @@ class ShowViewModel: ViewModel() {
             Log.d("ShowViewModel", "Starting fetchMovies()")
             _isLoading.value = true
             try {
-                val response = showApi.getShows()
+                val response = showApi.getShows(accessToken)
                 Log.d("ShowViewModel", "Shows fetched: ${response.size}")
                 _shows.value = response
             } catch (e: Exception) {

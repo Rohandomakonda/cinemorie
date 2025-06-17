@@ -17,6 +17,6 @@ val showApi = showsretrofit.create(ShowsApi::class.java)
 interface ShowsApi{
     @GET("api/ss/shows/allseries")
     suspend fun getShows(
-       // @retrofit2.http.Header("Authorization") token: String
+        @retrofit2.http.Header("Authorization") token: String
     ): List<Series>
 }

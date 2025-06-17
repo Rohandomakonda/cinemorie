@@ -63,8 +63,7 @@ fun HomeScreen(navController: NavController) {
         ContentItem(url = "https://www.discountdisplays.co.uk/our-blog/wp-content/uploads/the-hangover-movie-poster.jpg", title = "Comedy"),
         ContentItem(url = "https://i.pinimg.com/736x/71/3c/bd/713cbd0590734a208fe5e8796715a6cf.jpg", title = "Thriller")
     )
-    val showViewModel: ShowViewModel = viewModel()
-    val shows by showViewModel.shows
+
    // val isLoading by showViewModel.isLoading
     val context = LocalContext.current
     val authPreferences = AuthPreferences(context)
@@ -73,8 +72,13 @@ fun HomeScreen(navController: NavController) {
         val movieViewModel: MovieViewModel = viewModel(
             factory = MovieViewModelFactory(authResponse.accessToken)
         )
+        val showViewModel: ShowViewModel = viewModel(
+            factory = ShowViewModelFactory(authResponse.accessToken)
+        )
+        val shows by showViewModel.shows
         val movies by movieViewModel.movies
         val isLoading by movieViewModel.isLoading
+        val isLoading1 by showViewModel.isLoading
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,7 +127,7 @@ fun HomeScreen(navController: NavController) {
                     Log.d("UI", "Loading is true")
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
                 } else {
-                    Log.d("UI", "Loading is false, showing ${shows.size} movies")
+                    Log.d("UI", "Loading is false, showing ${movies.size} movies")
                     LazyHorizontalGrid(
                         rows = GridCells.Fixed(1),
                         modifier = Modifier
@@ -137,6 +141,34 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
             }
+            item{
+            Text(
+                text = "Top 10 in Cinémoire for series",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        item {
+            if (isLoading1) {
+                Log.d("UI", "Loading is true")
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
+            } else {
+                Log.d("UI", "Loading is false, showing ${shows.size} movies")
+                LazyHorizontalGrid(
+                    rows = GridCells.Fixed(1),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(shows) { Movie ->
+                        ShowCard(Movie,navController)
+                    }
+                }
+            }
+        }
         }
 
 
