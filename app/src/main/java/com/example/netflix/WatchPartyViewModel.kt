@@ -1,15 +1,22 @@
 package com.example.netflix
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.netflix.UserPreferences.AuthPreferences
+import com.example.netflix.websocket.WatchPartyWebSocketClient
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
+class WatchPartyViewModel(
+    private val partyCode: String,
+    private val authPreferences: AuthPreferences
+) : ViewModel() {
 
     private val watchPartyService = WatchPartyService()
     private val webSocketClient = WatchPartyWebSocketClient()
@@ -43,7 +50,16 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
     init {
         loadParty()
         observeConnectionStatus()
+        observeParticipants()
     }
+    private fun observeParticipants() {
+        viewModelScope.launch {
+            webSocketClient.participantUpdates.collect { updatedList ->
+                participants = updatedList
+            }
+        }
+    }
+
 
     private fun loadParty() {
         viewModelScope.launch {
@@ -67,8 +83,9 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
         }
     }
 
+
     fun connectToParty() {
-        webSocketClient.connect()
+        webSocketClient.connect(partyCode)
     }
 
     fun sendWatchEvent(action: String, timestamp: Double) {
@@ -96,6 +113,9 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
                     party = result
                     participants = result.participantIds
                     errorMessage = ""
+
+                    // After joining, request real-time update
+                    webSocketClient.sendParticipantRequest(partyCode)
                 } else {
                     errorMessage = "Failed to join party"
                 }
@@ -104,6 +124,7 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
             }
         }
     }
+
 
     private fun observeConnectionStatus() {
         viewModelScope.launch {
@@ -117,9 +138,9 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
         webSocketClient.disconnect()
     }
 
-    private fun getCurrentUserId(): Long {
-        // TODO: Implement proper user session management
-        return 1L
+    private suspend fun getCurrentUserId(): Long {
+        return authPreferences.profileData.firstOrNull()?.id
+            ?: throw IllegalStateException("User not logged in")
     }
 
     override fun onCleared() {
@@ -127,11 +148,15 @@ class WatchPartyViewModel(private val partyCode: String) : ViewModel() {
         webSocketClient.disconnect()
     }
 
-    class Factory(private val partyCode: String) : ViewModelProvider.Factory {
+    class Factory(
+        private val partyCode: String,
+        private val context: Context
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(WatchPartyViewModel::class.java)) {
-                return WatchPartyViewModel(partyCode) as T
+                val authPreferences = AuthPreferences(context.applicationContext)
+                return WatchPartyViewModel(partyCode, authPreferences) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

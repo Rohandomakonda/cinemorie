@@ -32,7 +32,7 @@ data class movieDetails(
 
 @Parcelize
 data class Movie(
-    val id: Long,
+    val id: Int,
     val title: String,
     val description: String,
     val releaseDate: String,
@@ -40,7 +40,7 @@ data class Movie(
     val genre: String,
     val language: String,
     val rating: Double,
-     val videoData: String, // will not be passed
+    val videoData: String, // will not be passed
     val thumbnailUrl: String
 ) : Parcelable
 

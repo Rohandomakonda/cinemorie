@@ -1,6 +1,5 @@
 package com.example.netflix
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -61,8 +60,9 @@ fun MovieDetailScreen(
     val movie = remember {
         navController.previousBackStackEntry?.savedStateHandle?.get<Movie>("movie")
     }
+    val context = LocalContext.current
     val viewModel: MovieDetailViewModel = viewModel(
-        factory = MovieDetailViewModel.Factory(movie)
+        factory = MovieDetailViewModel.Factory(movie,context)
     )
 
     val data = viewModel.getMovie()
@@ -71,7 +71,7 @@ fun MovieDetailScreen(
     val isLoading = viewModel.isLoading
     val errorMessage = viewModel.errorMessage
     val createdPartyCode = viewModel.createdPartyCode
-    val context = LocalContext.current
+
     val authPreferences = AuthPreferences(context)
     val profile by authPreferences.profileData.collectAsState(initial = null)
     val profileId= profile?.id
@@ -191,7 +191,10 @@ fun MovieDetailScreen(
                             Button(
                                 onClick = {
                                     data?.let {
-                                        navController.currentBackStackEntry?.savedStateHandle?.set("movie", it)
+                                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                                            "movie",
+                                            it
+                                        )
                                         navController.navigate(Screen.OtherPage.FullVideoScreen.bRoute)
                                     }
                                 },
@@ -280,7 +283,12 @@ fun MovieDetailScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("🎉 Watch Party", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "🎉 Watch Party",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
 
                     if (createdPartyCode.isNotEmpty()) {
@@ -294,16 +302,28 @@ fun MovieDetailScreen(
                                 modifier = Modifier.padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text("Party Created!", color = Color.Green, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "Party Created!",
+                                    color = Color.Green,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text("Invite Code:", color = Color.Gray, fontSize = 14.sp)
-                                Text(createdPartyCode, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    createdPartyCode,
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Button(
                                     onClick = {
-                                        // Navigate to watch party screen
-                                        navController.navigate("watch_party/$createdPartyCode")
-                                        viewModel.toggleDialog(false)
+                                        data?.let {
+    navController.currentBackStackEntry?.savedStateHandle?.set("Video", it.videoData)
+}
+Log.d("Stomp", data?.videoData?:"null")
+val route = Screen.OtherPage.WatchParty.bRoute.replace("{partyCode}", createdPartyCode)
+navController.navigate(route)
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
@@ -318,7 +338,10 @@ fun MovieDetailScreen(
                             onClick = { viewModel.createParty() },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(BorderStroke(2.dp, Color.White), shape = RoundedCornerShape(100)),
+                                .border(
+                                    BorderStroke(2.dp, Color.White),
+                                    shape = RoundedCornerShape(100)
+                                ),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             enabled = !isLoading
                         ) {
@@ -378,14 +401,33 @@ fun MovieDetailScreen(
                         }
                     }
 
-                    // Error/Success Message
-                    if (errorMessage.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = errorMessage,
-                            color = if (errorMessage.contains("Success") || errorMessage.contains("created")) Color.Green else Color.Red,
-                            fontSize = 12.sp
-                        )
+                        // Error/Success Message
+                        if (errorMessage.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = errorMessage,
+                                color = if (errorMessage.contains("Success") || errorMessage.contains(
+                                        "created"
+                                    )
+                                ) Color.Green else Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }
+
+
+                        if (errorMessage.contains("Successfully joined")) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    navController.navigate("watch_party/${inviteCode.trim()}")
+                                    viewModel.toggleDialog(false)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
+                            ) {
+                                Text("Enter Party")
+                            }
+                        }
                     }
                 }
             }

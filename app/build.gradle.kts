@@ -59,8 +59,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
-        implementation ("androidx.mediarouter:mediarouter:1.6.0")
-        implementation ("com.google.android.gms:play-services-cast-framework:21.3.0")
+    implementation ("androidx.mediarouter:mediarouter:1.6.0")
+    implementation ("com.google.android.gms:play-services-cast-framework:21.3.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -126,6 +126,14 @@ dependencies {
 // Optional: OkHttp logging (for network debugging)
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
     implementation ("com.google.android.material:material:1.9.0")
+    // STOMP client for Android
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+
+    // OkHttp for WebSocket transport
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 
     implementation("androidx.compose.material3:material3:1.1.0")
     implementation("org.apache.commons:commons-text:1.10.0")
