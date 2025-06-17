@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -201,8 +202,14 @@ fun WatchList(navController: NavController) {
                 }
             }
         } else {
-            item{
-                Text("Movies")
+            item {
+                Text(
+                    text = "Movie",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
             items(movies) { movie ->
                 if (at != null) {
@@ -212,8 +219,15 @@ fun WatchList(navController: NavController) {
                 }
             }
         }
+
         item{
-            Text("Series")
+            Text(
+                text = "Series",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(16.dp)
+            )
         }
         items(series) { serie ->
             if (at != null) {
