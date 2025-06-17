@@ -16,7 +16,7 @@ class WatchPartyWebSocketClient {
     private val gson = Gson()
     private val stompClient: StompClient = Stomp.over(
         Stomp.ConnectionProvider.OKHTTP,
-        "ws://10.0.2.2:8083/ws" // Replace with your actual IP for real device testing
+        "ws://10.0.2.2:8084/ws" // Replace with your actual IP for real device testing
     )
 
     private val _watchEvents = MutableSharedFlow<WatchEvent>(

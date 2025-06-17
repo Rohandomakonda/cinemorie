@@ -46,7 +46,7 @@ interface WatchPartyApi {
 }
 
 class WatchPartyService {
-    private val baseUrl = "http://10.0.2.2:8083/" // Use this for Android emulator
+    private val baseUrl = "http://10.0.2.2:8084/" // Use this for Android emulator
     // private val baseUrl = "http://localhost:8080/" // Use this for physical device on same network
 
     private val retrofit = Retrofit.Builder()
