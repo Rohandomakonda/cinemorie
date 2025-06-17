@@ -24,6 +24,7 @@ import com.google.android.gms.cast.framework.CastContext
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         Log.d("MainActivity", "onCreate called")
         CastContext.getSharedInstance(this)  // `this` = Activity context
 
