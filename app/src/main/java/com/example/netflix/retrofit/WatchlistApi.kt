@@ -14,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 val watchlistretrofit = Retrofit.Builder()
     .baseUrl("http://10.0.2.2:8765/")
@@ -39,12 +40,13 @@ interface WatchlistApi {
         @Field("movieid") movieid: Long
     ): Response<MoviesWatchlist>
 
-    @DELETE("api/watchlist/movie/{id}")
+    @DELETE("api/watchlist/movie")
     suspend fun deletemoviewatchlist(
         @Header("Authorization") token: String,
-        @Field("userid") userid: Long,
-        @Field("movieid") movieid: Long
-    ): Response<Long>
+        @Query("userid") userid: Long,
+        @Query("movieid") movieid: Long
+    ): Response<List<Long>>
+
 
     @GET("api/watchlist/series/{profileId}")
     suspend fun getseries(
@@ -60,8 +62,8 @@ interface WatchlistApi {
         @Field("userid") userid: Long,
         @Field("series") seriesid: Long
     ): Response<SeriesWatchList>
-
-    @DELETE("api/watchlist/series/{id}")
+    @FormUrlEncoded
+    @DELETE("api/watchlist/series")
     suspend fun deleteserieswatchlist(
         @Header("Authorization") token: String,
         @Field("userid") userid: Long,
