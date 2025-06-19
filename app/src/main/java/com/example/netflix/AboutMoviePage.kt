@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,12 +48,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.netflix.UserPreferences.AuthPreferences
-import com.example.netflix.dtos.LoginRequest
-import com.example.netflix.retrofit.authApi
 import com.example.netflix.retrofit.watchlistApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -269,6 +267,7 @@ fun MovieDetailScreen(
             }
         }
     }
+    var text: String = remember { mutableStateOf("").toString() }
 
     if (showDialog) {
         Dialog(onDismissRequest = { viewModel.toggleDialog(false) }) {
@@ -294,6 +293,7 @@ fun MovieDetailScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     if (createdPartyCode.isNotEmpty()) {
+                        text = "Party Created!"
                         // Show created party code
                         Surface(
                             color = Color(40, 40, 40),
@@ -305,7 +305,7 @@ fun MovieDetailScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    "Party Created!",
+                                    text,
                                     color = Color.Green,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -384,8 +384,9 @@ navController.navigate(route)
                                 viewModel.joinParty()
                                 // Navigate to party screen after successful join
                                 if (errorMessage.contains("Successfully joined")) {
-                                    navController.navigate("watch_party/$inviteCode")
-                                    viewModel.toggleDialog(false)
+                                    text = "Party Joined!!"
+                                    val route = Screen.OtherPage.WatchParty.bRoute.replace("{partyCode}", createdPartyCode)
+                                    navController.navigate(route)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -414,21 +415,6 @@ navController.navigate(route)
                                 ) Color.Green else Color.Red,
                                 fontSize = 12.sp
                             )
-                        }
-
-
-                        if (errorMessage.contains("Successfully joined")) {
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Button(
-                                onClick = {
-                                    navController.navigate("watch_party/${inviteCode.trim()}")
-                                    viewModel.toggleDialog(false)
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
-                            ) {
-                                Text("Enter Party")
-                            }
                         }
                     }
                 }
