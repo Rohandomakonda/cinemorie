@@ -66,8 +66,8 @@ interface WatchlistApi {
     @DELETE("api/watchlist/series")
     suspend fun deleteserieswatchlist(
         @Header("Authorization") token: String,
-        @Field("userid") userid: Long,
-        @Field("seriesid") movieid: Long
+        @Query("userid") userid: Long,
+        @Query("seriesid") movieid: Long
     ): Response<Long>
 
 
