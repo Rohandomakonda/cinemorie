@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.netflix.UserPreferences.AuthPreferences
-
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -63,8 +63,8 @@ fun HomeScreen(navController: NavController) {
         ContentItem(url = "https://www.discountdisplays.co.uk/our-blog/wp-content/uploads/the-hangover-movie-poster.jpg", title = "Comedy"),
         ContentItem(url = "https://i.pinimg.com/736x/71/3c/bd/713cbd0590734a208fe5e8796715a6cf.jpg", title = "Thriller")
     )
-
-   // val isLoading by showViewModel.isLoading
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
+    // val isLoading by showViewModel.isLoading
     val context = LocalContext.current
     val authPreferences = AuthPreferences(context)
     val auth by authPreferences.authData.collectAsState(initial = null)
@@ -85,49 +85,38 @@ fun HomeScreen(navController: NavController) {
                 .background(gradient(true, darkVioletColors))
                 .padding(bottom = 16.dp) // give some space at the end
         ) {
-            item {
-                card2(ContentItem(url = "https://m.media-amazon.com/images/I/61wSaUwpR0L._AC_UF894,1000_QL80_.jpg", "Harry Potter"),navController)
-            }
 
-            item {
-                Text(
-                    text = "Genre",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+            item{
+                if(!isLoading1 && !isLoading){
 
-            item {
-                LazyHorizontalGrid(
-                    rows = GridCells.Fixed(1),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(genres) {
-                        Card1(it,navController)
+                    card2(movies[0],navController)
+
+                    Text(
+                        text = "Genre",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    LazyHorizontalGrid(
+                        rows = GridCells.Fixed(1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(genres) {
+                            Card1(it,navController)
+                        }
                     }
-                }
-            }
 
-            item {
-                Text(
-                    text = "Top 10 in Cinémoire",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-            item {
-                if (isLoading) {
-                    Log.d("UI", "Loading is true")
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
-                } else {
-                    Log.d("UI", "Loading is false, showing ${movies.size} movies")
+                    Text(
+                        text = "Top 10 in Cinémoire",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
                     LazyHorizontalGrid(
                         rows = GridCells.Fixed(1),
                         modifier = Modifier
@@ -139,42 +128,50 @@ fun HomeScreen(navController: NavController) {
                             MovieCard(Movie,navController)
                         }
                     }
-                }
-            }
-            item{
-            Text(
-                text = "Top 10 in Cinémoire for series",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        item {
-            if (isLoading1) {
-                Log.d("UI", "Loading is true")
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.padding(16.dp))
-            } else {
-                Log.d("UI", "Loading is false, showing ${shows.size} movies")
-                LazyHorizontalGrid(
-                    rows = GridCells.Fixed(1),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(shows) { Movie ->
-                        ShowCard(Movie,navController)
+
+                    Text(
+                        text = "Top 10 in Cinémoire for series",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Log.d("UI1", "Loading is false, showing ${shows.size} movies")
+                    LazyHorizontalGrid(
+                        rows = GridCells.Fixed(1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(shows) { Movie ->
+                            ShowCard(Movie,navController)
+                        }
                     }
                 }
+                else{
+                    Spacer(modifier = Modifier.height(screenHeightDp/3))
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+
+                }
             }
-        }
+
+
+
+
+
         }
 
 
     }
 
 }
+
 
 
 @Composable
@@ -234,7 +231,9 @@ fun Card1(item: ContentItem,navController: NavController) {
                 .height(150.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .clickable{navController.navigate(Screen.OtherPage.Genre.bRoute)}
+                .clickable{
+                    navController.currentBackStackEntry?.savedStateHandle?.set("genre", item.title)
+                    navController.navigate(Screen.OtherPage.Genre.bRoute)}
         ) {
             Image(
                 painter = rememberAsyncImagePainter(item.url),
@@ -263,7 +262,7 @@ fun Card1(item: ContentItem,navController: NavController) {
     }
 }
 @Composable
-fun card2(item: ContentItem,navController: NavController) {
+fun card2(item: Movie,navController: NavController) {
     val darkViolet = darken(Color(0xFF1E1B4B),0.3f)
 
     Box(
@@ -273,7 +272,7 @@ fun card2(item: ContentItem,navController: NavController) {
     ) {
         // Full image display
         Image(
-            painter = rememberAsyncImagePainter(item.url),
+            painter = rememberAsyncImagePainter(item.thumbnailUrl),
             contentDescription = item.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -304,7 +303,9 @@ fun card2(item: ContentItem,navController: NavController) {
                 horizontalArrangement = Arrangement.Center,
                 ) {
                 Button(
-                    onClick = { },
+                    onClick = { navController.currentBackStackEntry?.savedStateHandle?.set("movie", item)
+                        navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                              },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
                     Icon(
@@ -318,7 +319,10 @@ fun card2(item: ContentItem,navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = {navController.navigate(Screen.OtherPage.MovieInfo.bRoute)},
+                    onClick = {
+                        navController.currentBackStackEntry?.savedStateHandle?.set("movie", item)
+                        navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                              },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                 ) {
                     Icon(
