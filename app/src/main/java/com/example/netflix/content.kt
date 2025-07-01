@@ -76,6 +76,23 @@ data class Episode(
     val thumbnailUrl: String
 ) : Parcelable
 
+sealed interface MediaItem : Parcelable {
+    val title: String
+    val thumbnailUrl: String
+}
+
+@Parcelize
+data class MovieItem(val movie: Movie) : MediaItem {
+    override val title: String get() = movie.title
+    override val thumbnailUrl: String get() = movie.thumbnailUrl
+}
+
+@Parcelize
+data class SeriesItem(val series: Series) : MediaItem {
+    override val title: String get() = series.title
+    override val thumbnailUrl: String get() = series.thumbnailUrl
+}
+
 
 
 

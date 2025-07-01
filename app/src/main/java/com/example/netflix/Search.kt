@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,141 +35,145 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.netflix.UserPreferences.AuthPreferences
 
 
-fun getClosestMatchesByLevenshtein(search: String, list: List<movieDetails>): List<movieDetails> {
-    val filtered = list.filter {
+fun getClosestMatchesByLevenshtein(search: String, list: List<MediaItem>): List<MediaItem> {
+    return list.filter {
         it.title.contains(search, ignoreCase = true)
     }
-
-    return filtered
-
 }
 
+
 @Composable
-fun Search(navController: NavController) {
-    val violetGradient = listOf(
-        Color(0xFF4C1D95),
-        Color(0xFF1E1B4B),
-    )
+fun Search(
+    navController: NavController
+) {
+    val violetGradient = listOf(Color(0xFF4C1D95), Color(0xFF1E1B4B))
     val darkVioletColors = violetGradient.map { darken(it, 0.5f) }
 
     var searchText by remember { mutableStateOf("") }
-    var searchItemsFound by remember { mutableStateOf<List<movieDetails>>(emptyList()) }
-    val allMovies = listOf(
-        movieDetails(
-            title = "Dune 2",
-            backgroundImage = "https://www.tallengestore.com/cdn/shop/products/Fast_Furious_Presents_Hobbs_Shaw_-_Dwayne_Rock_Johnson_-_Jason_Statham_Idris_Alba_-_Tallenge_Hollywood_Action_Movie_Poster_dc2cfde0-101a-4bc4-a5c3-b469bc0c2fa8.jpg?v=1582543424",
-        ),
-        movieDetails(
-            title = "Dune",
-            backgroundImage = "https://m.media-amazon.com/images/M/MV5BZjE0ZjgzMzYtMTAxYi00NGMzLThmZDktNzFlMzA2MWRmYWQ0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-        ),
-        movieDetails(
-            title = "Stranger Things",
-            backgroundImage = "https://www.indiewire.com/wp-content/uploads/2017/09/another-earth-2011.jpg?w=674",
-        ),
-        movieDetails(
-            title = "Big Bang Theory",
-            backgroundImage = "https://www.discountdisplays.co.uk/our-blog/wp-content/uploads/the-hangover-movie-poster.jpg",
-        ),
-        movieDetails(
-            title = "Dark",
-            backgroundImage = "https://i.pinimg.com/736x/71/3c/bd/713cbd0590734a208fe5e8796715a6cf.jpg",
+    var searchItemsFound by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
+
+    val context = LocalContext.current
+    val authPreferences = AuthPreferences(context)
+    val auth by authPreferences.authData.collectAsState(initial = null)
+    auth?.let { authResponse ->
+        val movieViewModel: MovieViewModel = viewModel(
+            factory = MovieViewModelFactory(authResponse.accessToken)
         )
-    )
+        val showViewModel: ShowViewModel = viewModel(
+            factory = ShowViewModelFactory(authResponse.accessToken)
+        )
+        val shows by showViewModel.shows
+        val movies by movieViewModel.movies
+        val isLoading by movieViewModel.isLoading
+        val isLoading1 by showViewModel.isLoading
 
+        val allItems: List<MediaItem> = movies.map { MovieItem(it) } + shows.map { SeriesItem(it) }
 
-    searchItemsFound = getClosestMatchesByLevenshtein(searchText, allMovies)
+        // update result list
+        searchItemsFound = getClosestMatchesByLevenshtein(searchText, allItems)
 
-    Box(modifier = Modifier.background(gradient(true, darkVioletColors))) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    searchItemsFound = getClosestMatchesByLevenshtein(it, allMovies)
-                },
-                label = { Text("Search for Movie, Shows..", color = Color.White) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = Color.White
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(30))
-                    .width(50.dp)
-                    .padding(top=40.dp),
-                shape = RoundedCornerShape(100)
-            )
-            if(searchItemsFound.size==0){
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "Sorry We don't Have that!!!!",
-                        fontSize = 25.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "Please Search for something else!!!!",
-                        fontSize = 15.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+        Box(modifier = Modifier.background(gradient(true, darkVioletColors))) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        searchItemsFound = getClosestMatchesByLevenshtein(it, allItems)
+                    },
+                    label = { Text("Search for Movie, Shows..", color = Color.White) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = Color.White
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(30))
+                        .width(50.dp)
+                        .padding(top = 40.dp),
+                    shape = RoundedCornerShape(100)
+                )
 
-            }
-            else{
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier,
-                    state = rememberLazyGridState(),
-                    contentPadding = PaddingValues(8.dp),
-                    reverseLayout = false,
-                    verticalArrangement = Arrangement.Top,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    userScrollEnabled = true
-                ) {
-                    items(searchItemsFound) { movie ->
-                        val movieName = movie.title
-                        val movieImage = movie.backgroundImage
-                        Image(
-                            painter = rememberAsyncImagePainter(movieImage),
-                            contentDescription = "${movieName} image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(160.dp)
-                                .width(200.dp)
-                                .clickable {
-                                    navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
-                                }
-                                .padding(8.dp)
+                if (searchItemsFound.isEmpty()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = "Sorry, we don't have that!",
+                            fontSize = 25.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = "Please search for something else.",
+                            fontSize = 15.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
                     }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier,
+                        state = rememberLazyGridState(),
+                        contentPadding = PaddingValues(8.dp),
+                        reverseLayout = false,
+                        verticalArrangement = Arrangement.Top,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        userScrollEnabled = true
+                    ) {
+                        items(searchItemsFound) { item ->
+                            Image(
+                                painter = rememberAsyncImagePainter(item.thumbnailUrl),
+                                contentDescription = "${item.title} image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .height(160.dp)
+                                    .width(200.dp)
+                                    .clickable {
+                                        when (item) {
+                                            is MovieItem -> {
+                                                navController.currentBackStackEntry
+                                                    ?.savedStateHandle
+                                                    ?.set("movie", item.movie)
+                                                navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                                            }
+
+                                            is SeriesItem -> {
+                                                navController.currentBackStackEntry
+                                                    ?.savedStateHandle
+                                                    ?.set("series", item.series)
+                                                navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
+                                            }
+                                        }
+                                    }
+                                    .padding(8.dp)
+                            )
+                        }
+                    }
                 }
-
             }
-
-
         }
     }
 }

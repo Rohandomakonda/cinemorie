@@ -60,15 +60,16 @@ interface WatchlistApi {
         @Header("Authorization") token: String,
         @Field("id") id: Long?,             // nullable
         @Field("userid") userid: Long,
-        @Field("series") seriesid: Long
+        @Field("seriesid") seriesid: Long
     ): Response<SeriesWatchList>
-    @FormUrlEncoded
+
+
     @DELETE("api/watchlist/series")
     suspend fun deleteserieswatchlist(
         @Header("Authorization") token: String,
         @Query("userid") userid: Long,
-        @Query("seriesid") movieid: Long
-    ): Response<Long>
+        @Query("seriesid") seriesid: Long
+    ): Response<List<Long>>
 
 
 }
