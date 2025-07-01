@@ -133,7 +133,7 @@ fun WatchList(navController: NavController) {
     }
     var series by remember { mutableStateOf<List<Series>>(emptyList()) }
     val removeFromSerieslist: (Long) -> Unit = { id ->
-        series = series.filter { it.seriesId != id }
+        series = series.filter { it.seriesId.toLong() != id }
     }
 
 
@@ -425,8 +425,8 @@ fun watchlistcardseries(
                 modifier = Modifier.clickable {
                     Log.d("MovieInfo", "Setting Movie: $movieItem1")
                     // When you click on a movie item, navigate to MovieInfo
-                    navController.currentBackStackEntry?.savedStateHandle?.set("movie", movieItem1)
-                    navController.navigate(Screen.OtherPage.MovieInfo.bRoute)
+                    navController.currentBackStackEntry?.savedStateHandle?.set("series", movieItem1)
+                    navController.navigate(Screen.OtherPage.ShowInfo.bRoute)
                 },
                 contentAlignment = Alignment.Center
             ) {
@@ -522,14 +522,14 @@ fun watchlistcardseries(
 
                                 if (at != null && profileId != null) {
                                     val response =
-                                        watchlistApi.deletemoviewatchlist(
+                                        watchlistApi.deleteserieswatchlist(
                                             token = at,
                                             userid = profileId,
-                                            movieid = movieItem1.seriesId
+                                            seriesid = movieItem1.seriesId.toLong()
                                         )
                                     if (response != null) {
                                         if (response.isSuccessful) {
-                                            removeFromSerieslist(movieItem1.seriesId)
+                                            removeFromSerieslist(movieItem1.seriesId.toLong())
 
 
                                             Toast.makeText(context, "Successfully deleted into watchlist", Toast.LENGTH_SHORT).show()
